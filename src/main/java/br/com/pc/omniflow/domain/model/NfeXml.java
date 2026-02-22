@@ -1,5 +1,6 @@
 package br.com.pc.omniflow.domain.model;
 
+import br.com.pc.omniflow.domain.enums.StatusProcessamento;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -7,6 +8,13 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "NFE_XML")
 public class NfeXml {
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.dataImportacao == null) {
+            this.dataImportacao = LocalDateTime.now();
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,43 +25,79 @@ public class NfeXml {
     @JoinColumn(name = "GRU_ID", nullable = false)
     private GrupoEmpresa grupo;
 
-    @Column(name = "NFE_CHAVE_ACESSO", length = 44, nullable = false)
+    @Column(name = "NFE_CHAVE_ACESSO", length = 44, nullable = false, unique = true)
     private String chaveAcesso;
 
-    @Lob
-    @Column(name = "NFE_XML_ORIGINAL", nullable = false)
-    private byte[] xmlOriginal;
+    @Column(name = "NFE_XML_ORIGINAL", nullable = false, columnDefinition = "TEXT")
+    private String xmlOriginal;
 
-    @Column(name = "NFE_DATA_IMPORTACAO", nullable = false)
+    @Column(name = "NFE_DATA_IMPORTACAO", nullable = false, updatable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dataImportacao;
 
-    @Column(name = "NF_STATUS_PROCESSAMENTO", length = 20)
-    private String statusProcessamento;
+    @Enumerated(EnumType.STRING) // Aqui a mágica para salvar a String do Enum
+    @Column(name = "NF_STATUS_PROCESSAMENTO", length = 20, nullable = false,
+            columnDefinition = "VARCHAR(20) DEFAULT 'RECEBIDO'")
+    private StatusProcessamento statusProcessamento = StatusProcessamento.RECEBIDO;
 
     @Column(name = "LOG_ERRO", length = 200)
     private String logErro;
 
     public NfeXml() {}
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public GrupoEmpresa getGrupo() { return grupo; }
-    public void setGrupo(GrupoEmpresa grupo) { this.grupo = grupo; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getChaveAcesso() { return chaveAcesso; }
-    public void setChaveAcesso(String chaveAcesso) { this.chaveAcesso = chaveAcesso; }
+    public GrupoEmpresa getGrupo() {
+        return grupo;
+    }
 
-    public byte[] getXmlOriginal() { return xmlOriginal; }
-    public void setXmlOriginal(byte[] xmlOriginal) { this.xmlOriginal = xmlOriginal; }
+    public void setGrupo(GrupoEmpresa grupo) {
+        this.grupo = grupo;
+    }
 
-    public LocalDateTime getDataImportacao() { return dataImportacao; }
-    public void setDataImportacao(LocalDateTime dataImportacao) { this.dataImportacao = dataImportacao; }
+    public String getChaveAcesso() {
+        return chaveAcesso;
+    }
 
-    public String getStatusProcessamento() { return statusProcessamento; }
-    public void setStatusProcessamento(String statusProcessamento) { this.statusProcessamento = statusProcessamento; }
+    public void setChaveAcesso(String chaveAcesso) {
+        this.chaveAcesso = chaveAcesso;
+    }
 
-    public String getLogErro() { return logErro; }
-    public void setLogErro(String logErro) { this.logErro = logErro; }
+    public String getXmlOriginal() {
+        return xmlOriginal;
+    }
+
+    public void setXmlOriginal(String xmlOriginal) {
+        this.xmlOriginal = xmlOriginal;
+    }
+
+    public LocalDateTime getDataImportacao() {
+        return dataImportacao;
+    }
+
+    public void setDataImportacao(LocalDateTime dataImportacao) {
+        this.dataImportacao = dataImportacao;
+    }
+
+    public StatusProcessamento getStatusProcessamento() {
+        return statusProcessamento;
+    }
+
+    public void setStatusProcessamento(StatusProcessamento statusProcessamento) {
+        this.statusProcessamento = statusProcessamento;
+    }
+
+    public String getLogErro() {
+        return logErro;
+    }
+
+    public void setLogErro(String logErro) {
+        this.logErro = logErro;
+    }
 }
