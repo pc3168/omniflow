@@ -1,9 +1,17 @@
 package br.com.pc.omniflow.domain.model;
 
+import br.com.pc.omniflow.converter.TipoEntidadeConverter;
+import br.com.pc.omniflow.domain.enums.TipoDocumento;
+import br.com.pc.omniflow.domain.enums.TipoEntidade;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ENTIDADES")
+@Table(name = "ENTIDADES", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "UK_GRUPO_DOCUMENTO",
+                columnNames = {"GRU_ID", "ENT_DOCUMENTO"}
+        )
+})
 public class Entidade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,46 +28,22 @@ public class Entidade {
     @Column(name = "ENT_NOME", length = 100, nullable = false)
     private String nome;
 
-    @Column(name = "ENT_TIPO", length = 1, nullable = false)
-    private String tipo; // F, L, E, T
+    @Column(name = "ENT_CODIGO_EXTERNO", length = 10, nullable = false)
+    private String codigoExterno;
 
-    public Long getId() {
-        return id;
+    @Column(name = "ENT_TIPO_DOCUMENTO", length = 1, nullable = false, columnDefinition = "CHAR(1) DEFAULT '0'")
+    private TipoDocumento tipoDocumento = TipoDocumento.CNPJ; // Converterá 0 ou 1
+
+    @Column(name = "ENT_UF", length = 2, nullable = false)
+    private String uf;
+
+
+    // O columnDefinition ajuda o Hibernate a criar o script SQL com DEFAULT 'E'
+    @Convert(converter = TipoEntidadeConverter.class)
+    @Column(name = "ENT_TIPO", length = 1, nullable = false, columnDefinition = "CHAR(1) DEFAULT 'E'")
+    private TipoEntidade tipo = TipoEntidade.EXTERNO; // F, L, E, T
+
+    public Entidade() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public GrupoEmpresa getGrupo() {
-        return grupo;
-    }
-
-    public void setGrupo(GrupoEmpresa grupo) {
-        this.grupo = grupo;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
 }
