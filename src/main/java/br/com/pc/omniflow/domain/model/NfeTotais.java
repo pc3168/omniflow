@@ -2,6 +2,7 @@ package br.com.pc.omniflow.domain.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "NFE_TOTAIS")
@@ -16,45 +17,69 @@ public class NfeTotais {
     @JoinColumn(name = "GRU_ID", nullable = false)
     private GrupoEmpresa grupo;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CAB_ID", nullable = false)
     private NfeCabecalho cabecalho;
 
     @Column(name = "TOT_VNF", precision = 15, scale = 2)
-    private BigDecimal valorNota;
+    private BigDecimal valorNota = BigDecimal.ZERO;
 
     @Column(name = "TOT_VPROD", precision = 15, scale = 2)
-    private BigDecimal valorProdutos;
+    private BigDecimal valorProdutos = BigDecimal.ZERO;
 
     @Column(name = "TOT_VBC", precision = 15, scale = 2)
-    private BigDecimal baseCalculoIcms;
+    private BigDecimal baseCalculoIcms = BigDecimal.ZERO; //<vbc>
 
     @Column(name = "TOT_VICMS", precision = 15, scale = 2)
-    private BigDecimal valorIcms;
+    private BigDecimal valorIcms = BigDecimal.ZERO; //<vICMS>
 
     @Column(name = "TOT_VST", precision = 15, scale = 2)
-    private BigDecimal valorIcmsSt;
+    private BigDecimal valorIcmsSt = BigDecimal.ZERO;
 
     @Column(name = "TOT_VFRETE", precision = 15, scale = 2)
-    private BigDecimal valorFrete;
+    private BigDecimal valorFrete = BigDecimal.ZERO;
 
     @Column(name = "TOT_VSEG", precision = 15, scale = 2)
-    private BigDecimal valorSeguro;
+    private BigDecimal valorSeguro = BigDecimal.ZERO;
 
     @Column(name = "TOT_VDESC", precision = 15, scale = 2)
-    private BigDecimal valorDesconto;
+    private BigDecimal valorDesconto = BigDecimal.ZERO;
 
     @Column(name = "TOT_VOUTRO", precision = 15, scale = 2)
-    private BigDecimal outrasDespesas;
+    private BigDecimal outrasDespesas = BigDecimal.ZERO; //<vOutro>
 
     @Column(name = "TOT_VIPI", precision = 15, scale = 2)
-    private BigDecimal valorIpi;
+    private BigDecimal valorIpi = BigDecimal.ZERO;
 
     @Column(name = "TOT_VPIS", precision = 15, scale = 2)
-    private BigDecimal valorPis;
+    private BigDecimal valorPis = BigDecimal.ZERO;
 
     @Column(name = "TOT_VCOFINS", precision = 15, scale = 2)
-    private BigDecimal valorCofins;
+    private BigDecimal valorCofins = BigDecimal.ZERO;
+
+    @Column(name = "TOT_VBCST", precision = 15, scale = 2)
+    private BigDecimal baseCalculoIcmsSt = BigDecimal.ZERO; // <vBCST>
+
+    @Column(name = "TOT_VFCP", precision = 15, scale = 2)
+    private BigDecimal valorFcp = BigDecimal.ZERO; // <vFCP>
+
+    @Column(name = "TOT_VFCPST", precision = 15, scale = 2)
+    private BigDecimal valorFcpSt = BigDecimal.ZERO; // <vFCPST>
+
+    @Column(name = "TOT_VIPIDEVOL", precision = 15, scale = 2)
+    private BigDecimal valorIpiDevol = BigDecimal.ZERO; // <vIPIDevol>
+
+    @Column(name = "TOT_VICMSDESON", precision = 15, scale = 2)
+    private BigDecimal valorIcmsDeson = BigDecimal.ZERO; // <vICMSDeson> - ICMS Desonerado
+
+    @Column(name = "TOT_VTOTTRIB", precision = 15, scale = 2)
+    private BigDecimal valorTotalTributos = BigDecimal.ZERO; // <vTotTrib> - Valor aproximado dos tributos (IBPT)
+
+    @Column(name = "TOT_VII", precision = 15, scale = 2)
+    private BigDecimal valorIi = BigDecimal.ZERO; // <vII> - Imposto de Importação
+
+    @Column(name = "TOT_VFCPSTRET", precision = 15, scale = 2)
+    private BigDecimal valorFcpStRet = BigDecimal.ZERO; // <vFCPSTRet> - FCP retido anteriormente por ST
 
     public NfeTotais() {
     }
@@ -104,4 +129,80 @@ public class NfeTotais {
 
     public BigDecimal getValorCofins() { return valorCofins; }
     public void setValorCofins(BigDecimal valorCofins) { this.valorCofins = valorCofins; }
+
+    public BigDecimal getBaseCalculoIcmsSt() {
+        return baseCalculoIcmsSt;
+    }
+
+    public void setBaseCalculoIcmsSt(BigDecimal baseCalculoIcmsSt) {
+        this.baseCalculoIcmsSt = baseCalculoIcmsSt;
+    }
+
+    public BigDecimal getValorFcp() {
+        return valorFcp;
+    }
+
+    public void setValorFcp(BigDecimal valorFcp) {
+        this.valorFcp = valorFcp;
+    }
+
+    public BigDecimal getValorFcpSt() {
+        return valorFcpSt;
+    }
+
+    public void setValorFcpSt(BigDecimal valorFcpSt) {
+        this.valorFcpSt = valorFcpSt;
+    }
+
+    public BigDecimal getValorIpiDevol() {
+        return valorIpiDevol;
+    }
+
+    public void setValorIpiDevol(BigDecimal valorIpiDevol) {
+        this.valorIpiDevol = valorIpiDevol;
+    }
+
+    public BigDecimal getValorIcmsDeson() {
+        return valorIcmsDeson;
+    }
+
+    public void setValorIcmsDeson(BigDecimal valorIcmsDeson) {
+        this.valorIcmsDeson = valorIcmsDeson;
+    }
+
+    public BigDecimal getValorTotalTributos() {
+        return valorTotalTributos;
+    }
+
+    public void setValorTotalTributos(BigDecimal valorTotalTributos) {
+        this.valorTotalTributos = valorTotalTributos;
+    }
+
+    public BigDecimal getValorIi() {
+        return valorIi;
+    }
+
+    public void setValorIi(BigDecimal valorIi) {
+        this.valorIi = valorIi;
+    }
+
+    public BigDecimal getValorFcpStRet() {
+        return valorFcpStRet;
+    }
+
+    public void setValorFcpStRet(BigDecimal valorFcpStRet) {
+        this.valorFcpStRet = valorFcpStRet;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NfeTotais nfeTotais = (NfeTotais) o;
+        return Objects.equals(id, nfeTotais.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

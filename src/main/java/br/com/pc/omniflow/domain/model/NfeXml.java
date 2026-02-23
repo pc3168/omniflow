@@ -4,6 +4,7 @@ import br.com.pc.omniflow.domain.enums.StatusProcessamento;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "NFE_XML")
@@ -100,4 +101,17 @@ public class NfeXml {
     public void setLogErro(String logErro) {
         this.logErro = logErro;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NfeXml nfeXml = (NfeXml) o;
+        return Objects.equals(id, nfeXml.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
 }

@@ -3,7 +3,9 @@ package br.com.pc.omniflow.domain.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "PRODUTOS")
+@Table(name = "PRODUTOS", uniqueConstraints = {
+        @UniqueConstraint(name = "UK_PRODUTO_GRUPO_CODIGO", columnNames = {"GRU_ID", "PRO_SKU"})
+})
 public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +22,6 @@ public class Produto {
     @Column(name = "PRO_DESCRICAO", length = 100, nullable = false)
     private String descricao;
 
-    @Column(name = "PRO_ISKIT", nullable = false)
-    private boolean isKit;
+    @Column(name = "PRO_ISKIT", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isKit = false;
 }
