@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -53,6 +54,15 @@ public class NfeItem {
 
     @Column(name = "ITEM_FABRICAO")
     private LocalDate fabricacao;
+
+    @Column(name = "ITE_PROCESSADO", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean processado = false;
+    // false = Ainda não gerou registro na ESTOQUE_MOVIMENTACAO
+    // true  = Já impactou o estoque
+
+    @Column(name = "ITE_DATA_PROCESSAMENTO")
+    private LocalDateTime dataProcessamento;
+    // Para auditoria: saber quando o estoque foi realmente atualizado
 
     public NfeItem() {
     }

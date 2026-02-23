@@ -1,6 +1,8 @@
 package br.com.pc.omniflow.domain.model;
 
+import br.com.pc.omniflow.converter.StatusRegraConverter;
 import br.com.pc.omniflow.converter.TipoMovimentoConverter;
+import br.com.pc.omniflow.domain.enums.StatusRegra;
 import br.com.pc.omniflow.domain.enums.TipoMovimentoEstoque;
 import jakarta.persistence.*;
 
@@ -27,6 +29,10 @@ public class RegraCfop {
 
     @Column(name = "REG_AFETA_ESTOQUE", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean afetaEstoque = true;
+
+    @Convert(converter = StatusRegraConverter.class)
+    @Column(name = "REG_STATUS", length = 1, nullable = false, columnDefinition = "Char(1) DEFAULT 'P'")
+    private StatusRegra status = StatusRegra.PENDENTE;
 
     public RegraCfop() {}
 
