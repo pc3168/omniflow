@@ -1,5 +1,6 @@
 package br.com.pc.omniflow.domain.model;
 
+import br.com.pc.omniflow.converter.TipoProdutoConverter;
 import br.com.pc.omniflow.domain.enums.TipoProduto;
 import jakarta.persistence.*;
 
@@ -33,6 +34,7 @@ public class Produto {
     @Column(name = "PRO_DESCRICAO", length = 100, nullable = false)
     private String descricao;
 
+    @Convert(converter = TipoProdutoConverter.class)
     @Column(name = "PRO_TIPO", length = 1, nullable = false, columnDefinition = "CHAR(1) DEFAULT 'S' ")
     private TipoProduto tipo = TipoProduto.SIMPLES;
 

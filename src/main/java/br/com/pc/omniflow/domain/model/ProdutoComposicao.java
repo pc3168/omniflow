@@ -26,7 +26,7 @@ public class ProdutoComposicao {
     @JoinColumn(name = "PRO_ID", nullable = false)
     private Produto produtoFilho; // O COMPONENTE
 
-    @Column(name = "PRO_QUANTIDADE", precision = 15, scale = 4, nullable = false, columnDefinition = "DECIMAL(15,4) DAFAULT 1.0" )
+    @Column(name = "PRO_QUANTIDADE", precision = 15, scale = 4, nullable = false, columnDefinition = "DECIMAL(15,4) DEFAULT 1.0" )
     private BigDecimal quantidade = BigDecimal.ONE;
 
     public ProdutoComposicao() {}
