@@ -3,6 +3,7 @@ package br.com.pc.omniflow.domain.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "PRODUTO_CONVERSAO", uniqueConstraints = {
@@ -36,5 +37,66 @@ public class ProdutoConversao {
     @Column(name = "CONV_UNIDADE_SAIDA", length = 10, nullable = false)
     private String unidadeSaida; // Ex: "UN"
 
-    // Getters e Setters
+    public ProdutoConversao() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
+
+    public Entidade getFornecedor() {
+        return fornecedor;
+    }
+
+    public void setFornecedor(Entidade fornecedor) {
+        this.fornecedor = fornecedor;
+    }
+
+    public String getUnidadeEntrada() {
+        return unidadeEntrada;
+    }
+
+    public void setUnidadeEntrada(String unidadeEntrada) {
+        this.unidadeEntrada = unidadeEntrada;
+    }
+
+    public BigDecimal getFator() {
+        return fator;
+    }
+
+    public void setFator(BigDecimal fator) {
+        this.fator = fator;
+    }
+
+    public String getUnidadeSaida() {
+        return unidadeSaida;
+    }
+
+    public void setUnidadeSaida(String unidadeSaida) {
+        this.unidadeSaida = unidadeSaida;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ProdutoConversao that = (ProdutoConversao) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

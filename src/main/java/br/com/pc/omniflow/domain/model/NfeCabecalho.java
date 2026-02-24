@@ -165,6 +165,18 @@ public class NfeCabecalho {
         this.tipoOperacao = tipoOperacao;
     }
 
+    public List<NfeItem> getItens() {
+        return itens;
+    }
+
+    public void setItens(List<NfeItem> itens) {
+        this.itens = itens;
+    }
+
+    public NfeTotais getTotais() {
+        return totais;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
