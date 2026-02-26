@@ -14,7 +14,7 @@ import java.util.Objects;
                 columnNames = {"GRU_ID", "ENT_DOCUMENTO"}
         )
 })
-public class Entidade {
+public class Entidade extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ENT_ID")
@@ -123,4 +123,5 @@ public class Entidade {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }
