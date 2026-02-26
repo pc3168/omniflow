@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "NFE_ITENS")
-public class NfeItem {
+public class NfeItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

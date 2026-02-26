@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "PRODUTOS_COMPOSICAO")
-public class ProdutoComposicao {
+public class ProdutoComposicao extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

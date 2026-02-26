@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "ESTOQUE_MOVIMENTACAO")
-public class EstoqueMovimentacao {
+public class EstoqueMovimentacao extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MOV_ID")

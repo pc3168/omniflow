@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "REGRA_CFOP")
-public class RegraCfop {
+public class RegraCfop extends BaseEntity{
 
     @Id
     @Column(name = "REG_CFOP", length = 4)

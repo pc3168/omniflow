@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "NFE_TOTAIS")
-public class NfeTotais {
+public class NfeTotais extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

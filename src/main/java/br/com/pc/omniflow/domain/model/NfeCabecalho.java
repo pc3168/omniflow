@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "NFE_CABECALHOS")
-public class NfeCabecalho {
+public class NfeCabecalho extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

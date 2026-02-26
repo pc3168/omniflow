@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "NFE_XML")
-public class NfeXml {
+@Table(name = "NFE_XMLS")
+public class NfeXml extends BaseEntity{
 
     @PrePersist
     protected void onCreate() {
@@ -28,6 +28,9 @@ public class NfeXml {
 
     @Column(name = "NFE_CHAVE_ACESSO", length = 44, nullable = false, unique = true)
     private String chaveAcesso;
+
+    @Column(name = "XML_NOME_ARQUIVO")
+    private String nomeArquivo;
 
     @Column(name = "NFE_XML_ORIGINAL", nullable = false, columnDefinition = "TEXT")
     private String xmlOriginal;
@@ -100,6 +103,14 @@ public class NfeXml {
 
     public void setLogErro(String logErro) {
         this.logErro = logErro;
+    }
+
+    public String getNomeArquivo() {
+        return nomeArquivo;
+    }
+
+    public void setNomeArquivo(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
     }
 
     @Override

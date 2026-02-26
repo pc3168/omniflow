@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "ESTOQUE_SALDOS")
-public class EstoqueSaldo {
+public class EstoqueSaldo extends BaseEntity{
     @EmbeddedId
     private EstoqueSaldoId id;
 

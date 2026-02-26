@@ -13,7 +13,7 @@ import java.util.Objects;
     */
         @UniqueConstraint(name = "UK_PROD_FORN_UNIDADE", columnNames = {"PROD_ID", "FORN_ID", "CONV_UNIDADE_ENTRADA"})
 })
-public class ProdutoConversao {
+public class ProdutoConversao extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

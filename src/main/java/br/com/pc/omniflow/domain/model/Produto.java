@@ -12,7 +12,7 @@ import java.util.Objects;
 @Table(name = "PRODUTOS", uniqueConstraints = {
         @UniqueConstraint(name = "UK_PRODUTO_GRUPO_CODIGO", columnNames = {"GRU_ID", "PRO_SKU"})
 })
-public class Produto {
+public class Produto extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PRO_ID")

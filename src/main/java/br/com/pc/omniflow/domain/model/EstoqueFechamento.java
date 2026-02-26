@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "ESTOQUE_FECHAMENTOS")
-public class EstoqueFechamento {
+public class EstoqueFechamento extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

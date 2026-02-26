@@ -20,6 +20,7 @@ public class OmniflowApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		System.out.println("-------------------------INICIO--------------------------");
-		testeService.teste();
+		testeService.teste(1L);
+//		testeService.teste2(1L);
 	}
 }
