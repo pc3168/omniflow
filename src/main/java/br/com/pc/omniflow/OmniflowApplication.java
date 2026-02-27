@@ -1,5 +1,7 @@
 package br.com.pc.omniflow;
 
+import br.com.pc.omniflow.service.ZTesteNfeArquivoService;
+import br.com.pc.omniflow.service.NfeXmlService;
 import br.com.pc.omniflow.service.TesteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,11 +18,20 @@ public class OmniflowApplication implements CommandLineRunner {
 	@Autowired
 	TesteService testeService;
 
+	@Autowired
+	ZTesteNfeArquivoService zTesteNfeArquivoService;
+
+	@Autowired
+	NfeXmlService nfeXmlService;
+
 	@Override
 	public void run(String... args) throws Exception {
 
 		System.out.println("-------------------------INICIO--------------------------");
-		testeService.teste(1L);
+//		testeService.teste(1L);
 //		testeService.teste2(1L);
+		java.io.File file = new java.io.File("");
+
+		nfeXmlService.importar(1L, file, file.getName());
 	}
 }
