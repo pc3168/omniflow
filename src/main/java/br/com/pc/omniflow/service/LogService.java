@@ -33,4 +33,10 @@ public class LogService {
             classLogger.error("Detalhes da exceção: ", throwable);
         }
     }
+
+    public void erroProcessamento(String chave, String mensagem, Class<?> clazz) {
+        Logger classLogger = LoggerFactory.getLogger(clazz);
+        // Log formatado para facilitar o CTRL+F no arquivo de log
+        classLogger.error("[CHAVE: {}] [ORIGEM: {}] - {}", chave, clazz.getSimpleName(), mensagem);
+    }
 }
