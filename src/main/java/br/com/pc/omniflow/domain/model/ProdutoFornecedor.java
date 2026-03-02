@@ -13,6 +13,10 @@ public class ProdutoFornecedor extends BaseEntity {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "GRU_ID", nullable = false)
+    private GrupoEmpresa grupo;
+
+    @ManyToOne
     @JoinColumn(name = "PRO_ID")
     private Produto produto; // Seu código interno
 
@@ -56,6 +60,16 @@ public class ProdutoFornecedor extends BaseEntity {
 
     public void setCodigoNoFornecedor(String codigoNoFornecedor) {
         this.codigoNoFornecedor = codigoNoFornecedor;
+    }
+
+    @Override
+    public GrupoEmpresa getGrupo() {
+        return grupo;
+    }
+
+    @Override
+    public void setGrupo(GrupoEmpresa grupo) {
+        this.grupo = grupo;
     }
 
     @Override

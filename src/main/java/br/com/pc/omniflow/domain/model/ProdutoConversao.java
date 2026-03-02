@@ -21,6 +21,10 @@ public class ProdutoConversao extends BaseEntity{
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "GRU_ID", nullable = false)
+    private GrupoEmpresa grupo;
+
+    @ManyToOne
     @JoinColumn(name = "PROD_ID", nullable = false)
     private Produto produto;
 
@@ -86,6 +90,16 @@ public class ProdutoConversao extends BaseEntity{
 
     public void setUnidadeSaida(String unidadeSaida) {
         this.unidadeSaida = unidadeSaida;
+    }
+
+    @Override
+    public GrupoEmpresa getGrupo() {
+        return grupo;
+    }
+
+    @Override
+    public void setGrupo(GrupoEmpresa grupo) {
+        this.grupo = grupo;
     }
 
     @Override

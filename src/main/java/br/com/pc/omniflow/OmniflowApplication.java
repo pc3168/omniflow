@@ -30,8 +30,9 @@ public class OmniflowApplication implements CommandLineRunner {
 		System.out.println("-------------------------INICIO--------------------------");
 //		testeService.teste(1L);
 //		testeService.teste2(1L);
-		java.io.File file = new java.io.File("");
+		java.io.File file = new java.io.File("xml");
 
-		nfeXmlService.importar(1L, file, file.getName());
+		System.out.println(file.getAbsolutePath());
+		nfeXmlService.importar(1L, file);
 	}
 }

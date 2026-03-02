@@ -18,6 +18,15 @@ public class GrupoEmpresa {
     public GrupoEmpresa() {
     }
 
+    public GrupoEmpresa(Long id) {
+        this(id, "");
+    }
+
+    public GrupoEmpresa(Long id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
     public Long getId() {
         return id;
     }

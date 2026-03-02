@@ -17,6 +17,10 @@ public class NfeItem extends BaseEntity {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "GRU_ID", nullable = false)
+    private GrupoEmpresa grupo;
+
+    @ManyToOne
     @JoinColumn(name = "CAB_ID", nullable = false)
     private NfeCabecalho cabecalho;
 
@@ -169,6 +173,32 @@ public class NfeItem extends BaseEntity {
 
     public void setRegraCfop(RegraCfop regraCfop) {
         this.regraCfop = regraCfop;
+    }
+
+    @Override
+    public GrupoEmpresa getGrupo() {
+        return grupo;
+    }
+
+    @Override
+    public void setGrupo(GrupoEmpresa grupo) {
+        this.grupo = grupo;
+    }
+
+    public boolean isProcessado() {
+        return processado;
+    }
+
+    public void setProcessado(boolean processado) {
+        this.processado = processado;
+    }
+
+    public LocalDateTime getDataProcessamento() {
+        return dataProcessamento;
+    }
+
+    public void setDataProcessamento(LocalDateTime dataProcessamento) {
+        this.dataProcessamento = dataProcessamento;
     }
 
     @Override

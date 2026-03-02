@@ -16,27 +16,28 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 @Service
-public class NfeArquivoService extends BaseService {
+public class ZTesteNfeArquivoService extends BaseService {
 
     private final NfeXmlRepository nfeXmlRepository;
 
-    public NfeArquivoService(NfeXmlRepository nfeXmlRepository) {
+    public ZTesteNfeArquivoService(NfeXmlRepository nfeXmlRepository) {
         this.nfeXmlRepository = nfeXmlRepository;
     }
 
     /**
      * Processa um arquivo ZIP: Extrai para pasta local e inicia a persistência.
      */
-    public void processarZip(Long gruId, InputStream zipInputStream, Path destinoPasta) throws IOException {
-        // 1. Extrair os arquivos do ZIP para a pasta destino
-        extrairZip(zipInputStream, destinoPasta);
+    public void processarZip(Long gruId, InputStream zipInputStream, Path destinoPasta) {
 
-        // 2. Ler os arquivos da pasta e salvar no banco usando seu helper comFiltro
         comFiltro(gruId, () -> {
             try {
+                log.info(this.getClass(), "Iniciando descompactação de ZIP para o grupo: " + gruId);
+                // 1. Extrair os arquivos do ZIP para a pasta destino
+                extrairZip(zipInputStream, destinoPasta);
+                // 2. Ler os arqui vos da pasta e salvar no banco usando seu helper comFiltro
                 processarArquivosDaPasta(gruId, destinoPasta);
-            } catch (IOException e) {
-                throw new RuntimeException("Erro ao ler pasta de extração", e);
+            } catch (Exception e) {
+                lancarErro("Falha crítica no processamento do arquivo ZIP", e);
             }
             return null;
         });
@@ -52,6 +53,8 @@ public class NfeArquivoService extends BaseService {
                     Files.copy(zis, newPath, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
+        } catch (IOException e) {
+            lancarErro("Erro ao extrair arquivos do ZIP", e);
         }
     }
 
@@ -63,9 +66,6 @@ public class NfeArquivoService extends BaseService {
                         try {
                             String conteudoXml = Files.readString(file);
                             String nomeArquivo = file.getFileName().toString();
-
-                            // Aqui você precisaria de um Regex ou Parser rápido
-                            // para pegar a chave de acesso antes do Parser completo
                             String chaveAcesso = extrairChaveAcessoSimples(conteudoXml);
 
                             if (!nfeXmlRepository.existsByChaveAcesso(chaveAcesso)) {
@@ -77,21 +77,33 @@ public class NfeArquivoService extends BaseService {
                                 // O grupoId e Data serão preenchidos pela lógica do JPA/BaseEntity
 
                                 nfeXmlRepository.save(nfeXml);
+                                log.info(this.getClass(), "XML persistido: " + chaveAcesso);
 
                                 // Opcional: Mover para uma pasta "OK" ou deletar
                                 Files.delete(file);
+                            } else {
+                                log.info(this.getClass(), "XML duplicado ignorado: " + chaveAcesso);
+                                Files.delete(file);
                             }
                         } catch (Exception e) {
-                            System.err.println("Erro ao processar arquivo " + file + ": " + e.getMessage());
+                            log.erro(this.getClass(), "Erro ao processar arquivo individual: " + file, e);
                         }
                     });
         }
     }
 
-    // Um Regex simples para pegar a chave sem precisar dar parse no XML todo ainda
     private String extrairChaveAcessoSimples(String xml) {
         Pattern pattern = Pattern.compile("chNFe>(\\d{44})<");
         Matcher matcher = pattern.matcher(xml);
         return matcher.find() ? matcher.group(1) : "CHAVE-NAO-IDENTIFICADA-" + System.currentTimeMillis();
     }
+
+//    private String extrairChaveAcessoSimples(String xml) {
+//        Pattern pattern = Pattern.compile("chNFe>(\\d{44})<|infNFe Id=\"NFe(\\d{44})\"");
+//        Matcher matcher = pattern.matcher(xml);
+//        if (matcher.find()) {
+//            return matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
+//        }
+//        return "CHAVE-NAO-IDENTIFICADA-" + System.currentTimeMillis();
+//    }
 }

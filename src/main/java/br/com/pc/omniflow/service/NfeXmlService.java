@@ -11,6 +11,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -25,8 +30,15 @@ public class NfeXmlService extends BaseService {
         this.nfeXmlRepository = nfeXmlRepository;
     }
 
+
     public void importar(Long gruId, File arquivo){
-        importar(gruId, arquivo, arquivo.getName());
+        if (arquivo.isDirectory()){
+            for (File arFile : arquivo.listFiles()){
+                importar(gruId, arFile, arFile.getName());
+            }
+        }else{
+            importar(gruId, arquivo, arquivo.getName());
+        }
     }
 
     /**
@@ -40,13 +52,13 @@ public class NfeXmlService extends BaseService {
                 if (nomeOriginal.toLowerCase().endsWith(".zip")) {
                     processarZip(gruId, arquivo);
                 } else if (nomeOriginal.toLowerCase().endsWith(".xml")) {
-                    processarXmlUnico(arquivo, nomeOriginal);
+                    processarXmlUnico(gruId, arquivo, nomeOriginal);
                 } else {
                     log.info(this.getClass(), "Formato de arquivo não suportado: " + nomeOriginal);
                 }
 
             } catch (Exception e) {
-                log.erro(this.getClass(), "Erro crítico ao importar arquivo " + nomeOriginal, e);
+                lancarErro("Erro crítico ao importar arquivo " + nomeOriginal, e);
             }
             return null;
         });
@@ -71,40 +83,37 @@ public class NfeXmlService extends BaseService {
                     }
 
                     String conteudoXml = out.toString(StandardCharsets.UTF_8);
-                    salvarNoBanco(entry.getName(), conteudoXml);
+                    salvarNoBanco(gruId, entry.getName(), conteudoXml);
                 }
             }
+//            moverParaProcessados(arquivoZip);
         }
     }
 
-    private void processarXmlUnico(File arquivo, String nomeArquivo) throws IOException {
+    private void processarXmlUnico(Long gruId, File arquivo, String nomeArquivo) throws IOException {
         String conteudoXml = Files.readString(arquivo.toPath(), StandardCharsets.UTF_8);
-        salvarNoBanco(nomeArquivo, conteudoXml);
+        salvarNoBanco(gruId, nomeArquivo, conteudoXml);
+//        moverParaProcessados(arquivo);
     }
 
-    private void salvarNoBanco(String nomeArquivo, String conteudoXml) {
+    private void moverParaProcessados(File arquivoOriginal) {
         try {
-            // 1. Extrai a chave de acesso via Regex rápido (sem parser pesado ainda)
-            String chaveAcesso = extrairChaveAcessoSimples(conteudoXml);
+            Path pastaProcessados = Paths.get(arquivoOriginal.getParent(), "processados");
 
-            // 2. Verifica se já existe (O Spring Data usará o filtro de grupo aqui)
-            if (nfeXmlRepository.existsByChaveAcesso(chaveAcesso)) {
-                log.info(this.getClass(), "XML ignorado (Chave já existe): " + chaveAcesso);
-                return;
+            if (Files.notExists(pastaProcessados)) {
+                Files.createDirectories(pastaProcessados);
             }
 
-            // 3. Persiste na staging area (NFE_XMLS)
-            NfeXml nfeXml = new NfeXml();
-            nfeXml.setChaveAcesso(chaveAcesso);
-            nfeXml.setXmlOriginal(conteudoXml);
-            nfeXml.setNomeArquivo(nomeArquivo);
-            nfeXml.setStatusProcessamento(StatusProcessamento.RECEBIDO);
+            Path destino = pastaProcessados.resolve(arquivoOriginal.getName());
 
-            nfeXmlRepository.save(nfeXml);
-            log.info(this.getClass(), "XML salvo com sucesso: " + chaveAcesso);
+            // ATOMIC_MOVE: garante que o arquivo não fique "corrompido" no meio do caminho
+            // REPLACE_EXISTING: se já existir um com o mesmo nome lá, ele sobrescreve
+            Files.move(arquivoOriginal.toPath(), destino, StandardCopyOption.REPLACE_EXISTING);
 
-        } catch (Exception e) {
-            lancarErro("Falha ao salvar XML no banco: " + nomeArquivo, e);
+            log.info(this.getClass(), "Arquivo movido para: " + destino);
+
+        } catch (IOException e) {
+            lancarErro("Falha ao mover arquivo: " + arquivoOriginal.getName(), e);
         }
     }
 
@@ -116,4 +125,48 @@ public class NfeXmlService extends BaseService {
         }
         return "CHAVE-NAO-IDENTIFICADA-" + System.currentTimeMillis();
     }
+
+
+    private void salvarNoBanco(Long gruId, String nomeArquivo, String conteudoXml) {
+        try {
+            String chaveAcesso = extrairChaveAcessoSimples(conteudoXml);
+
+            if (contemChave(gruId, chaveAcesso)) {
+                log.info(this.getClass(), "XML ignorado (Chave já existe): " + chaveAcesso);
+                return;
+            }
+
+            NfeXml nfeXml = new NfeXml();
+            nfeXml.setChaveAcesso(chaveAcesso);
+            nfeXml.setXmlOriginal(conteudoXml);
+            nfeXml.setNomeArquivo(nomeArquivo);
+            nfeXml.setStatusProcessamento(StatusProcessamento.RECEBIDO);
+
+            this.salvar(gruId, nfeXmlRepository, nfeXml);
+            log.info(this.getClass(), "XML salvo com sucesso: " + chaveAcesso);
+
+        } catch (Exception e) {
+            lancarErro("Falha ao salvar XML no banco: " + nomeArquivo, e);
+        }
+    }
+
+    public List<NfeXml> listarPorGrupo(Long gruId) {
+        return comFiltro(gruId, nfeXmlRepository::findAll);
+    }
+
+    public Optional<NfeXml> buscarPorId(Long gruId, Long id) {
+        return comFiltro(gruId, () -> nfeXmlRepository.findById(id));
+    }
+
+    public void deletar(Long gruId, Long id) {
+        comFiltro(gruId, () -> {
+            nfeXmlRepository.deleteById(id);
+            return null;
+        });
+    }
+
+    private boolean contemChave(Long gruId, String chaveAcesso){
+        return comFiltro(gruId, () -> nfeXmlRepository.existsByChaveAcesso(chaveAcesso));
+    }
+
 }

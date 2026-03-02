@@ -47,7 +47,6 @@ public class EstoqueSaldo extends BaseEntity{
     }
 
     public EstoqueSaldo(GrupoEmpresa grupo, Entidade local, Entidade proprietario, Produto produto, String lote) {
-        // Inicializa o ID composto
         this.id = new EstoqueSaldoId(
                 grupo.getId(),
                 local.getId(),
@@ -60,8 +59,18 @@ public class EstoqueSaldo extends BaseEntity{
         this.local = local;
         this.proprietario = proprietario;
         this.produto = produto;
-        this.quantidadeTotal = BigDecimal.ZERO;
-        this.dataUltimaMovimentacao = LocalDateTime.now();
+//        this.quantidadeTotal = BigDecimal.ZERO;
+//        this.dataUltimaMovimentacao = LocalDateTime.now();
+    }
+
+    @Override
+    public GrupoEmpresa getGrupo() {
+        return grupo;
+    }
+
+    @Override
+    public void setGrupo(GrupoEmpresa grupo) {
+        this.grupo = grupo;
     }
 
     public EstoqueSaldoId getId() {

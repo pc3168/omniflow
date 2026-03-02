@@ -17,6 +17,7 @@ public class TesteService extends BaseService{
     }
 
     public void teste(Long gruId){
+
         comFiltro(gruId, entidadeRepository::findAll);
     }
 

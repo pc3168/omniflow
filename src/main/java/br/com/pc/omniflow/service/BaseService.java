@@ -1,9 +1,11 @@
 package br.com.pc.omniflow.service;
 
 import br.com.pc.omniflow.config.GrupoFilterHelper;
+import br.com.pc.omniflow.domain.model.GrupoEmpresa;
 import br.com.pc.omniflow.exception.OmniFlowException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.function.Supplier;
 
@@ -18,6 +20,14 @@ public abstract class BaseService {
 
     protected <T> T comFiltro(Long gruId, Supplier<T> query) {
         return grupoFilter.execute(gruId, query);
+    }
+
+    protected <T extends TenantEntity> T salvar(Long gruId, JpaRepository<T, ?> repository, T entidade) {
+        return comFiltro(gruId, () -> {
+            GrupoEmpresa grupo = new GrupoEmpresa(gruId);
+            entidade.setGrupo(grupo);
+            return repository.save(entidade);
+        });
     }
 
     /**
