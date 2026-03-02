@@ -1,6 +1,4 @@
-package br.com.pc.omniflow.service;
-
-import br.com.pc.omniflow.domain.model.GrupoEmpresa;
+package br.com.pc.omniflow.domain.model;
 
 public interface TenantEntity {
 

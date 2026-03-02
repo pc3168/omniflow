@@ -1,6 +1,5 @@
 package br.com.pc.omniflow.domain.model;
 
-import br.com.pc.omniflow.service.TenantEntity;
 import jakarta.persistence.MappedSuperclass;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;

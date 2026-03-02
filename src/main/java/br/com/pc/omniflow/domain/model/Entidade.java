@@ -30,6 +30,7 @@ public class Entidade extends BaseEntity{
     @Column(name = "ENT_NOME", length = 100, nullable = false)
     private String nome;
 
+    //Código usado para fazer um de para do ERP.
     @Column(name = "ENT_CODIGO_EXTERNO", length = 10, nullable = false)
     private String codigoExterno;
 

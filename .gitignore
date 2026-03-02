@@ -21,6 +21,8 @@ target/
 
 xml/*
 out/*
+logs/*
+**/src/main/resources/import.sql
 
 
 ### NetBeans ###

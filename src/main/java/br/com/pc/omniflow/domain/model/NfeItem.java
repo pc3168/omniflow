@@ -30,7 +30,7 @@ public class NfeItem extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "REG_CFOP", nullable = false)
-    private RegraCfop regraCfop;
+    private CfopRegra cfopRegra;
 
     @Column(name = "ITE_NUMERO", nullable = false)
     private Integer numeroItem; // nItem no XML
@@ -167,12 +167,12 @@ public class NfeItem extends BaseEntity {
         this.fabricacao = fabricacao;
     }
 
-    public RegraCfop getRegraCfop() {
-        return regraCfop;
+    public CfopRegra getRegraCfop() {
+        return cfopRegra;
     }
 
-    public void setRegraCfop(RegraCfop regraCfop) {
-        this.regraCfop = regraCfop;
+    public void setRegraCfop(CfopRegra cfopRegra) {
+        this.cfopRegra = cfopRegra;
     }
 
     @Override
