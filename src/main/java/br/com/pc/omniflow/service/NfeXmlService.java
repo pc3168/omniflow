@@ -158,7 +158,7 @@ public class NfeXmlService extends BaseService {
         return comFiltro(gruId, () -> nfeXmlRepository.findById(id));
     }
 
-    public void deletar(Long gruId, Long id) {
+    public void excluir(Long gruId, Long id) {
         comFiltro(gruId, () -> {
             nfeXmlRepository.deleteById(id);
             return null;

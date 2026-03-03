@@ -28,7 +28,7 @@ public class ProdutoService extends BaseService {
         });
     }
 
-    public void deletar(Long gruId, Long id) {
+    public void excluir(Long gruId, Long id) {
         deletar(gruId, repository, id);
     }
 }

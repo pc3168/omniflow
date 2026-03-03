@@ -41,7 +41,7 @@ public class EntidadeService extends BaseService{
         return comFiltro(gruId, repository::findAll);
     }
 
-    public void deletar(Long gruId, Long id) {
+    public void excluir(Long gruId, Long id) {
         deletar(gruId, repository, id);
     }
 }

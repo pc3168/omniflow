@@ -46,7 +46,7 @@ public class ProdutoFornecedorService extends BaseService {
         });
     }
 
-    public void deletar(Long gruId, Long id) {
+    public void excluir(Long gruId, Long id) {
         comFiltro(gruId, () -> {
             repository.deleteById(id);
             return null;

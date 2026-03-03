@@ -8,12 +8,12 @@ import br.com.pc.omniflow.domain.repository.CfopRegraRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegraCfopService extends BaseService {
+public class CfopRegraService extends BaseService {
 
     private final CfopRegraRepository repository;
     private final CfopService cfopService;
 
-    public RegraCfopService(CfopRegraRepository repository, CfopService cfopService) {
+    public CfopRegraService(CfopRegraRepository repository, CfopService cfopService) {
         this.repository = repository;
         this.cfopService = cfopService;
     }
@@ -47,7 +47,7 @@ public class RegraCfopService extends BaseService {
         });
     }
 
-    public void deletar(Long gruId, String id) {
+    public void excluir(Long gruId, String id) {
         comFiltro(gruId, () -> {
             if (repository.existsById(id)) {
                 repository.deleteById(id);
