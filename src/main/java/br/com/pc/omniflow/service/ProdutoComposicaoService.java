@@ -20,7 +20,7 @@ public class ProdutoComposicaoService extends BaseService {
      */
     public List<ProdutoComposicao> listarComponentes(Long gruId, Long produtoPaiId) {
         return comFiltro(gruId, () ->
-                repository.findByProdutoPaiId(produtoPaiId)
+                repository.findByProdutokit(produtoPaiId)
         );
     }
 

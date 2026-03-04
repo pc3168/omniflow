@@ -20,8 +20,14 @@ public class CfopService {
         return repository.findById(codigo);
     }
 
-    public Cfop salvarGlobal(Cfop cfop) {
-        return repository.save(cfop);
+    public Cfop salvarGlobal(String codigoCfop, String descricao) {
+        return buscarPorCodigo(codigoCfop)
+                .orElseGet(() -> {
+                    Cfop novo = new Cfop();
+                    novo.setCodigo(codigoCfop);
+                    novo.setDescricao(descricao);
+                    return repository.save(novo);
+                });
     }
 
     public List<Cfop> listarTodos() {

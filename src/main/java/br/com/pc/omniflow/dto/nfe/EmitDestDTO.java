@@ -16,10 +16,13 @@ public class EmitDestDTO {
     @JacksonXmlProperty(localName = "xFant")
     private String nomeFantasia;
 
+    @JacksonXmlProperty(localName = "enderEmit")
+    private EnderecoDTO endereco;
+
     public EmitDestDTO() {
     }
 
-    // Método auxiliar para pegar o documento independente de ser CNPJ ou CPF
+//    Método auxiliar para pegar o documento independente de ser CNPJ ou CPF
     public String getDocumento() {
         return (cnpj != null && !cnpj.isEmpty()) ? cnpj : cpf;
     }
@@ -54,5 +57,13 @@ public class EmitDestDTO {
 
     public void setNomeFantasia(String nomeFantasia) {
         this.nomeFantasia = nomeFantasia;
+    }
+
+    public EnderecoDTO getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(EnderecoDTO endereco) {
+        this.endereco = endereco;
     }
 }
