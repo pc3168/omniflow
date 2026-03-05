@@ -9,6 +9,12 @@ public class ProdDTO {
     @JacksonXmlProperty(localName = "cProd")
     private String codigo;
 
+    @JacksonXmlProperty(localName = "cEAN")
+    private String ean;
+
+    @JacksonXmlProperty(localName = "CFOP")
+    private String cfop;
+
     @JacksonXmlProperty(localName = "xProd")
     private String descricao;
 
@@ -62,5 +68,21 @@ public class ProdDTO {
 
     public void setValorUnitario(BigDecimal valorUnitario) {
         this.valorUnitario = valorUnitario;
+    }
+
+    public String getEan() {
+        return ean;
+    }
+
+    public void setEan(String ean) {
+        this.ean = ean;
+    }
+
+    public String getCfop() {
+        return cfop;
+    }
+
+    public void setCfop(String cfop) {
+        this.cfop = cfop;
     }
 }

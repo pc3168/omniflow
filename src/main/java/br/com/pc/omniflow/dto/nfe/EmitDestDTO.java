@@ -1,5 +1,6 @@
 package br.com.pc.omniflow.dto.nfe;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class EmitDestDTO {
@@ -16,10 +17,14 @@ public class EmitDestDTO {
     @JacksonXmlProperty(localName = "xFant")
     private String nomeFantasia;
 
-    @JacksonXmlProperty(localName = "enderEmit")
+    @JsonAlias({"enderEmit", "enderDest"})
     private EnderecoDTO endereco;
 
     public EmitDestDTO() {
+    }
+
+    public String getUf() {
+        return (endereco != null) ? endereco.getUf() : null;
     }
 
 //    Método auxiliar para pegar o documento independente de ser CNPJ ou CPF

@@ -3,6 +3,7 @@ package br.com.pc.omniflow.service;
 import br.com.pc.omniflow.domain.enums.TipoDocumento;
 import br.com.pc.omniflow.domain.model.Entidade;
 import br.com.pc.omniflow.domain.repository.EntidadeRepository;
+import br.com.pc.omniflow.dto.nfe.EmitDestDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,21 +17,21 @@ public class EntidadeService extends BaseService{
         this.repository = repository;
     }
 
-    public Entidade buscarOuCriarPorDocumento(Long gruId, String documento, String nomeRazao, String uf) {
+    public Entidade buscarOuCriarPorDocumento(Long gruId, EmitDestDTO dto) {
         return comFiltro(gruId, () -> {
-            return repository.findByDocumento(documento)
+            return repository.findByDocumento(dto.getDocumento())
                     .orElseGet(() -> {
-                        log.info(this.getClass(), "Criando nova entidade: " + nomeRazao + " (" + documento + ")");
+                        log.info(this.getClass(), "Criando nova entidade: " + dto.getNomeFantasia() + " (" + dto.getDocumento() + ")");
 
-                        TipoDocumento tipoDocumento = documento.length() >= 14 ? TipoDocumento.CNPJ : TipoDocumento.CPF;
+                        TipoDocumento tipoDocumento = dto.getDocumento().length() >= 14 ? TipoDocumento.CNPJ : TipoDocumento.CPF;
 
                         Entidade nova = new Entidade();
-                        nova.setDocumento(documento);
-                        nova.setNome(nomeRazao);
+                        nova.setDocumento(dto.getDocumento());
+                        nova.setNome(dto.getNome());
                         nova.setCodigoExterno(null);
 //                        nova.setTipo(TipoEntidade.EXTERNO);
                         nova.setTipoDocumento(tipoDocumento);
-                        nova.setUf(uf);
+                        nova.setUf(dto.getUf());
 
                         return this.salvar(gruId, repository, nova);
                     });

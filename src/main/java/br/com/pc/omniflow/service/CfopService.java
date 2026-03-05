@@ -20,7 +20,11 @@ public class CfopService {
         return repository.findById(codigo);
     }
 
-    public Cfop salvarGlobal(String codigoCfop, String descricao) {
+    public Cfop buscarOuSalvar(String codigoCfop) {
+        return buscarOuSalvar(codigoCfop, "CFOP não classificado.");
+    }
+
+    public Cfop buscarOuSalvar(String codigoCfop, String descricao) {
         return buscarPorCodigo(codigoCfop)
                 .orElseGet(() -> {
                     Cfop novo = new Cfop();

@@ -27,7 +27,7 @@ public class CfopRegraService extends BaseService {
 
                         // 2. Verifica se o CFOP existe no dicionário global
                         Cfop cfopMestre = cfopService.buscarPorCodigo(codigoCfop)
-                                .orElseGet(() -> cfopService.salvarGlobal(codigoCfop, "CFOP não catalogado"));
+                                .orElseGet(() -> cfopService.buscarOuSalvar(codigoCfop, "CFOP não catalogado"));
 
                         // 3. Cria a regra específica do grupo
                         CfopRegra novaRegra = new CfopRegra();
