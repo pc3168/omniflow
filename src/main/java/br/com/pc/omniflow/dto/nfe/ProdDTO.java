@@ -27,6 +27,11 @@ public class ProdDTO {
     @JacksonXmlProperty(localName = "vUnCom")
     private BigDecimal valorUnitario;
 
+    @JacksonXmlProperty(localName = "NCM")
+    private String ncm;
+
+
+
     public ProdDTO() {
     }
 
@@ -84,5 +89,13 @@ public class ProdDTO {
 
     public void setCfop(String cfop) {
         this.cfop = cfop;
+    }
+
+    public String getNcm() {
+        return ncm;
+    }
+
+    public void setNcm(String ncm) {
+        this.ncm = ncm;
     }
 }

@@ -31,7 +31,7 @@ public class Entidade extends BaseEntity{
     private String nome;
 
     //Código usado para fazer um de para do ERP.
-    @Column(name = "ENT_CODIGO_EXTERNO", length = 10, nullable = false)
+    @Column(name = "ENT_CODIGO_EXTERNO", length = 10, nullable = true)
     private String codigoExterno;
 
     @Column(name = "ENT_TIPO_DOCUMENTO", length = 1, nullable = false, columnDefinition = "CHAR(1) DEFAULT '0'")

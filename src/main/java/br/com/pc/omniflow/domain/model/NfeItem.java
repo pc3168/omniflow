@@ -25,8 +25,14 @@ public class NfeItem extends BaseEntity {
     private NfeCabecalho cabecalho;
 
     @ManyToOne
-    @JoinColumn(name = "PRO_ID", nullable = false)
+    @JoinColumn(name = "PRO_ID", nullable = true)
     private Produto produto;
+
+    @Column(name = "ITE_CODIGO_XML", length = 60) // O cProd do fornecedor
+    private String codigoXml;
+
+    @Column(name = "ITE_DESCRICAO_XML", length = 120) // O xProd do fornecedor
+    private String descricaoXml;
 
     @ManyToOne
     @JoinColumn(name = "REG_CFOP", nullable = false)
@@ -69,6 +75,10 @@ public class NfeItem extends BaseEntity {
     // Para auditoria: saber quando o estoque foi realmente atualizado
 
     public NfeItem() {
+    }
+
+    public NfeItem(Long gruId) {
+        this.grupo = new GrupoEmpresa(gruId);
     }
 
     public Long getId() {
@@ -167,14 +177,6 @@ public class NfeItem extends BaseEntity {
         this.fabricacao = fabricacao;
     }
 
-    public CfopRegra getRegraCfop() {
-        return cfopRegra;
-    }
-
-    public void setRegraCfop(CfopRegra cfopRegra) {
-        this.cfopRegra = cfopRegra;
-    }
-
     @Override
     public GrupoEmpresa getGrupo() {
         return grupo;
@@ -199,6 +201,30 @@ public class NfeItem extends BaseEntity {
 
     public void setDataProcessamento(LocalDateTime dataProcessamento) {
         this.dataProcessamento = dataProcessamento;
+    }
+
+    public String getCodigoXml() {
+        return codigoXml;
+    }
+
+    public void setCodigoXml(String codigoXml) {
+        this.codigoXml = codigoXml;
+    }
+
+    public String getDescricaoXml() {
+        return descricaoXml;
+    }
+
+    public void setDescricaoXml(String descricaoXml) {
+        this.descricaoXml = descricaoXml;
+    }
+
+    public CfopRegra getCfopRegra() {
+        return cfopRegra;
+    }
+
+    public void setCfopRegra(CfopRegra cfopRegra) {
+        this.cfopRegra = cfopRegra;
     }
 
     @Override

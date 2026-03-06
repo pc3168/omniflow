@@ -1,8 +1,9 @@
 package br.com.pc.omniflow;
 
-import br.com.pc.omniflow.service.ZTesteNfeArquivoService;
+import br.com.pc.omniflow.service.NfeParserService;
 import br.com.pc.omniflow.service.NfeXmlService;
 import br.com.pc.omniflow.service.TesteService;
+import br.com.pc.omniflow.service.ZTesteNfeArquivoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,6 +25,9 @@ public class OmniflowApplication implements CommandLineRunner {
 	@Autowired
 	NfeXmlService nfeXmlService;
 
+	@Autowired
+	NfeParserService nfeParserService;
+
 	@Override
 	public void run(String... args) throws Exception {
 
@@ -34,5 +38,8 @@ public class OmniflowApplication implements CommandLineRunner {
 
 		System.out.println(file.getAbsolutePath());
 		nfeXmlService.importar(1L, file);
+
+		nfeParserService.processarPendentes(1L);
+		
 	}
 }

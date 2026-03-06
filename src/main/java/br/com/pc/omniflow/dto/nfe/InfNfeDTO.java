@@ -23,6 +23,10 @@ public class InfNfeDTO {
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<DetDTO> itens;
 
+    @JacksonXmlProperty(localName = "total")
+    private TotalDTO total;
+
+
     public InfNfeDTO() {
     }
 
@@ -64,5 +68,13 @@ public class InfNfeDTO {
 
     public void setItens(List<DetDTO> itens) {
         this.itens = itens;
+    }
+
+    public TotalDTO getTotal() {
+        return total;
+    }
+
+    public void setTotal(TotalDTO total) {
+        this.total = total;
     }
 }

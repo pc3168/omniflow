@@ -6,7 +6,8 @@ import br.com.pc.omniflow.domain.enums.ModeloDocumento;
 import br.com.pc.omniflow.domain.enums.TipoOperacao;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,7 +52,7 @@ public class NfeCabecalho extends BaseEntity{
     private Integer serie;
 
     @Column(name = "CAB_DATA_EMISSAO")
-    private LocalDate dataEmissao;
+    private LocalDateTime dataEmissao;
 
     @Column(name = "CAB_NATUREZA")
     private String natureza;
@@ -75,7 +76,25 @@ public class NfeCabecalho extends BaseEntity{
         totais.setCabecalho(this);
     }
 
+    private LocalDateTime formatarDataSefaz(String dataXml) {
+        if (dataXml == null || dataXml.isEmpty()) return null;
+        // O OffsetDateTime entende o "-03:00" do final da string da SEFAZ
+        return OffsetDateTime.parse(dataXml).toLocalDateTime();
+    }
+
     public NfeCabecalho() {}
+
+    public void setDataEmissao(String dataEmissao) {
+        this.dataEmissao = formatarDataSefaz(dataEmissao);
+    }
+
+    public LocalDateTime getDataEmissao() {
+        return dataEmissao;
+    }
+
+    public void setDataEmissao(LocalDateTime dataEmissao) {
+        this.dataEmissao = dataEmissao;
+    }
 
     public Long getId() {
         return id;
@@ -139,14 +158,6 @@ public class NfeCabecalho extends BaseEntity{
 
     public void setSerie(Integer serie) {
         this.serie = serie;
-    }
-
-    public LocalDate getDataEmissao() {
-        return dataEmissao;
-    }
-
-    public void setDataEmissao(LocalDate dataEmissao) {
-        this.dataEmissao = dataEmissao;
     }
 
     public String getNatureza() {

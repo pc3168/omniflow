@@ -20,7 +20,7 @@ public class ProdutoEanService extends BaseService {
         return comFiltro(gruId, () -> repository.findByEan(ean));
     }
 
-    public ProdutoEan salvarEan(Long gruId, Produto produto, String eanCodigo) {
+    public ProdutoEan buscarOuSalvarEan(Long gruId, Produto produto, String eanCodigo) {
         return buscarPorEan(gruId, eanCodigo).orElseGet(() -> {
             log.info(this.getClass(), "Cadastrando o Ean " + eanCodigo);
             ProdutoEan ean = new ProdutoEan();
