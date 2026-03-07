@@ -6,5 +6,6 @@ public enum StatusProcessamento {
     PENDENTE_REGRA,
     PROCESSADO,
     ERRO,
+    IGNORADO,
     CANCELADO
 }

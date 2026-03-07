@@ -1,6 +1,7 @@
 package br.com.pc.omniflow.service.cadastro;
 
 import br.com.pc.omniflow.domain.enums.StatusProcessamento;
+import br.com.pc.omniflow.domain.enums.TipoXml;
 import br.com.pc.omniflow.domain.model.NfeXml;
 import br.com.pc.omniflow.domain.repository.NfeXmlRepository;
 import br.com.pc.omniflow.service.BaseService;
@@ -131,6 +132,7 @@ public class NfeXmlService extends BaseService {
     private void salvarNoBanco(Long gruId, String nomeArquivo, String conteudoXml) {
         try {
             String chaveAcesso = extrairChaveAcessoSimples(conteudoXml);
+            TipoXml tipo = TipoXml.identificar(conteudoXml);
 
             if (contemChave(gruId, chaveAcesso)) {
                 log.info(this.getClass(), "XML ignorado (Chave já existe): " + chaveAcesso);
@@ -141,6 +143,7 @@ public class NfeXmlService extends BaseService {
             nfeXml.setChaveAcesso(chaveAcesso);
             nfeXml.setXmlOriginal(conteudoXml);
             nfeXml.setNomeArquivo(nomeArquivo);
+            nfeXml.setTipoXml(tipo);
             nfeXml.setStatusProcessamento(StatusProcessamento.RECEBIDO);
 
             this.salvar(gruId, nfeXmlRepository, nfeXml);

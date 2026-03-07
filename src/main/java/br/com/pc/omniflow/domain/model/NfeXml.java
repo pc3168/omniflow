@@ -1,6 +1,7 @@
 package br.com.pc.omniflow.domain.model;
 
 import br.com.pc.omniflow.domain.enums.StatusProcessamento;
+import br.com.pc.omniflow.domain.enums.TipoXml;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -46,6 +47,10 @@ public class NfeXml extends BaseEntity{
 
     @Column(name = "LOG_ERRO", length = 200)
     private String logErro;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "NFE_TIPO_XML", length = 20)
+    private TipoXml tipoXml;
 
     public NfeXml() {}
 
@@ -111,6 +116,14 @@ public class NfeXml extends BaseEntity{
 
     public void setNomeArquivo(String nomeArquivo) {
         this.nomeArquivo = nomeArquivo;
+    }
+
+    public TipoXml getTipoXml() {
+        return tipoXml;
+    }
+
+    public void setTipoXml(TipoXml tipoXml) {
+        this.tipoXml = tipoXml;
     }
 
     @Override

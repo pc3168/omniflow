@@ -2,16 +2,17 @@ package br.com.pc.omniflow.service.parser;
 
 import br.com.pc.omniflow.domain.enums.StatusProcessamento;
 import br.com.pc.omniflow.domain.enums.TipoEntidade;
+import br.com.pc.omniflow.domain.enums.TipoXml;
 import br.com.pc.omniflow.domain.model.*;
 import br.com.pc.omniflow.domain.repository.NfeXmlRepository;
 import br.com.pc.omniflow.dto.nfe.*;
 import br.com.pc.omniflow.service.BaseService;
-import br.com.pc.omniflow.service.fiscal.CfopRegraService;
-import br.com.pc.omniflow.service.fiscal.NfeCabecalhoService;
 import br.com.pc.omniflow.service.cadastro.EntidadeService;
 import br.com.pc.omniflow.service.cadastro.ProdutoEanService;
 import br.com.pc.omniflow.service.cadastro.ProdutoFornecedorService;
 import br.com.pc.omniflow.service.cadastro.ProdutoService;
+import br.com.pc.omniflow.service.fiscal.CfopRegraService;
+import br.com.pc.omniflow.service.fiscal.NfeCabecalhoService;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +62,7 @@ public class NfeParserService extends BaseService {
                 } catch (Exception e) {
                     nfeXml.setStatusProcessamento(StatusProcessamento.ERRO);
                     nfeXml.setLogErro(e.getMessage());
-                    lancarErro("Falha ao processar ID: " + nfeXml.getId(), e);
+                    lancarErro("Falha ao processar ID: " + nfeXml.getId() + " e a chave: " + nfeXml.getChaveAcesso(), e);
                 }
                 nfeXmlRepository.save(nfeXml);
             }
@@ -70,6 +71,13 @@ public class NfeParserService extends BaseService {
     }
 
     private StatusProcessamento processarConteudoXml(Long gruId, NfeXml nfeXml) throws Exception {
+        if (nfeXml.getTipoXml() != TipoXml.NFE) {
+            String mensagem  = "XML do tipo " + nfeXml.getTipoXml() + " identificado. Lógica de processamento ainda não implementada.";
+            nfeXml.setLogErro(mensagem);
+            log.info(this.getClass(), mensagem);
+            return StatusProcessamento.IGNORADO;
+        }
+
         NfeProcDTO nfeDto = xmlMapper.readValue(nfeXml.getXmlOriginal(), NfeProcDTO.class);
         InfNfeDTO inf = nfeDto.getNfe().getInfNFe();
         IdeDTO ide = inf.getIde();
@@ -134,17 +142,18 @@ public class NfeParserService extends BaseService {
                 cabecalho.adicionarItem(itemUnico);
             }
 
-            if (inf.getTotal() != null && inf.getTotal().getIcmsTot() != null) {
-                NfeTotais totaisEntidade = converterTotais(gruId, inf.getTotal().getIcmsTot());
-                cabecalho.setTotais(totaisEntidade);
-            }
-
             if (cfopRegraService.buscarPendente(det.getProduto().getCfop()) != null){
                 status = StatusProcessamento.PENDENTE_REGRA;
             }
 
-            nfeCabecalhoService.salvar(gruId, cabecalho);
         }
+
+        if (inf.getTotal() != null && inf.getTotal().getIcmsTot() != null) {
+            NfeTotais totaisEntidade = converterTotais(gruId, inf.getTotal().getIcmsTot());
+            cabecalho.setTotais(totaisEntidade);
+        }
+
+        nfeCabecalhoService.salvar(gruId, cabecalho);
         return status;
     }
 
