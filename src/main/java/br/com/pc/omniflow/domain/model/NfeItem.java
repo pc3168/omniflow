@@ -1,5 +1,7 @@
 package br.com.pc.omniflow.domain.model;
 
+import br.com.pc.omniflow.converter.TipoMovimentoConverter;
+import br.com.pc.omniflow.domain.enums.TipoMovimentoEstoque;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -31,7 +33,7 @@ public class NfeItem extends BaseEntity {
     @Column(name = "ITE_CODIGO_XML", length = 60) // O cProd do fornecedor
     private String codigoXml;
 
-    @Column(name = "ITE_DESCRICAO_XML", length = 120) // O xProd do fornecedor
+    @Column(name = "ITE_DESCRICAO_XML", length = 130) // O xProd do fornecedor
     private String descricaoXml;
 
     @ManyToOne
@@ -65,7 +67,7 @@ public class NfeItem extends BaseEntity {
     @Column(name = "ITEM_VALIDADE")
     private LocalDate validade;
 
-    @Column(name = "ITEM_FABRICAO")
+    @Column(name = "ITEM_FABRICACAO")
     private LocalDate fabricacao;
 
     @Column(name = "ITE_PROCESSADO", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
@@ -75,7 +77,10 @@ public class NfeItem extends BaseEntity {
 
     @Column(name = "ITE_DATA_PROCESSAMENTO")
     private LocalDateTime dataProcessamento;
-    // Para auditoria: saber quando o estoque foi realmente atualizado
+
+    @Convert(converter = TipoMovimentoConverter.class)
+    @Column(name = "ITE_SINAL_UTILIZADO", length = 1, nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
+    private TipoMovimentoEstoque sinalUtilizado = TipoMovimentoEstoque.NENHUM;
 
     public NfeItem() {
     }
@@ -236,6 +241,14 @@ public class NfeItem extends BaseEntity {
 
     public void setQuantidadeLote(BigDecimal quantidadeLote) {
         this.quantidadeLote = quantidadeLote;
+    }
+
+    public TipoMovimentoEstoque getSinalUtilizado() {
+        return sinalUtilizado;
+    }
+
+    public void setSinalUtilizado(TipoMovimentoEstoque sinalUtilizado) {
+        this.sinalUtilizado = sinalUtilizado;
     }
 
     @Override

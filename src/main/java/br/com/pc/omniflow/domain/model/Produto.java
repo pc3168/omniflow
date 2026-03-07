@@ -31,7 +31,7 @@ public class Produto extends BaseEntity{
     @Column(name = "PRO_SKU", length = 50, nullable = false)
     private String sku;
 
-    @Column(name = "PRO_DESCRICAO", length = 100, nullable = false)
+    @Column(name = "PRO_DESCRICAO", length = 130, nullable = false)
     private String descricao;
 
     @Convert(converter = TipoProdutoConverter.class)

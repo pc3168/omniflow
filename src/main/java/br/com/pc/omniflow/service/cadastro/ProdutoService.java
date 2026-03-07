@@ -22,7 +22,7 @@ public class ProdutoService extends BaseService {
                         log.info(this.getClass(), "Produto novo detectado: " + sku);
                         Produto novo = new Produto();
                         novo.setSku(sku);
-                        novo.setDescricao(descricao);
+                        novo.setDescricao(descricao.length() > 130 ? descricao.substring(0, 130) : descricao);
                         novo.setTipo(TipoProduto.SIMPLES);
                         return this.salvar(gruId, repository, novo);
                     });

@@ -1,6 +1,7 @@
 package br.com.pc.omniflow.service.cadastro;
 
 import br.com.pc.omniflow.domain.enums.TipoDocumento;
+import br.com.pc.omniflow.domain.enums.TipoEntidade;
 import br.com.pc.omniflow.domain.model.Entidade;
 import br.com.pc.omniflow.domain.repository.EntidadeRepository;
 import br.com.pc.omniflow.dto.nfe.EmitDestDTO;
@@ -16,6 +17,17 @@ public class EntidadeService extends BaseService {
 
     public EntidadeService(EntidadeRepository repository) {
         this.repository = repository;
+    }
+
+    public boolean isMinhaFilial(Long gruId, String documento) {
+        if (documento == null || documento.isEmpty()) return false;
+
+        // Buscamos se existe uma entidade com este documento, neste grupo,
+        // e que esteja marcada como tipo FILIAL (ou o nome que você deu ao Enum)
+        return comFiltro(gruId, () -> repository.existsByDocumentoAndTipo(
+                documento,
+                TipoEntidade.FILIAL
+        ));
     }
 
     public Entidade buscarOuCriarPorDocumento(Long gruId, EmitDestDTO dto) {

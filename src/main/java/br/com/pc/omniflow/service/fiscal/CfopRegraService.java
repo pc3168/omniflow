@@ -20,8 +20,8 @@ public class CfopRegraService extends BaseService {
         this.cfopService = cfopService;
     }
 
-    public CfopRegra buscarPendente(String cfop){
-        return repository.findByStatusAndCfopCodigo(StatusRegra.PENDENTE, cfop).orElse(null);
+    public CfopRegra buscarPendente(Long gruId, String cfop){
+        return comFiltro(gruId, () -> repository.findByStatusAndCfopCodigo(StatusRegra.PENDENTE, cfop).orElse(null));
     }
 
     public CfopRegra buscarOuCriarRegra(Long gruId, String codigoCfop) {
@@ -38,9 +38,10 @@ public class CfopRegraService extends BaseService {
                         // 3. Cria a regra específica do grupo
                         CfopRegra novaRegra = new CfopRegra();
                         novaRegra.setCfop(cfopMestre);
-                        novaRegra.setDescricao("Configuração automática - Revisão necessária");
+//                        novaRegra.setDescricao("Configuração automática - Revisão necessária");
                         novaRegra.setStatus(StatusRegra.PENDENTE); // Trava o estoque
-                        novaRegra.setSinalEstoque(TipoMovimentoEstoque.NENHUM);
+//                        novaRegra.setSinalEstoque(TipoMovimentoEstoque.NENHUM);
+                        novaRegra.setMovimentaEstoque(true);
 
                         return this.salvar(gruId, repository, novaRegra);
                     });
@@ -99,6 +100,30 @@ public class CfopRegraService extends BaseService {
             if (primeiroDigito == '1' || primeiroDigito == '2' || primeiroDigito == '3') {
                 return TipoMovimentoEstoque.SOMA;
             }
+        }
+
+        return TipoMovimentoEstoque.NENHUM;
+    }
+
+    public TipoMovimentoEstoque calcularSinal(String cfop, boolean isNotaPropria, boolean movimentaEstoque) {
+        if (!movimentaEstoque) return TipoMovimentoEstoque.NENHUM;
+
+        char p = cfop.charAt(0);
+
+        // PERSPECTIVA DE COMPRA (Nota de Terceiro)
+        if (!isNotaPropria) {
+            // Se o fornecedor mandou Saída (5,6,7), para mim que estou recebendo é ENTRADA
+            if (p == '5' || p == '6' || p == '7') return TipoMovimentoEstoque.SOMA;
+            // Se o fornecedor mandou Entrada (1,2,3), ele está fazendo uma devolução/retorno, para mim é SAÍDA
+            if (p == '1' || p == '2' || p == '3') return TipoMovimentoEstoque.SUBTRAI;
+        }
+
+        // PERSPECTIVA DE EMISSÃO (Nota Própria)
+        else {
+            // Se eu emito 5,6,7, a mercadoria está SAINDO
+            if (p == '5' || p == '6' || p == '7') return TipoMovimentoEstoque.SUBTRAI;
+            // Se eu emito 1,2,3 (Entrada própria, como compra de produtor rural), a mercadoria está ENTRANDO
+            if (p == '1' || p == '2' || p == '3') return TipoMovimentoEstoque.SOMA;
         }
 
         return TipoMovimentoEstoque.NENHUM;
