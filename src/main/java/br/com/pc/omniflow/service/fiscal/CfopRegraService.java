@@ -1,10 +1,12 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.fiscal;
 
 import br.com.pc.omniflow.domain.enums.StatusRegra;
 import br.com.pc.omniflow.domain.enums.TipoMovimentoEstoque;
 import br.com.pc.omniflow.domain.model.Cfop;
 import br.com.pc.omniflow.domain.model.CfopRegra;
 import br.com.pc.omniflow.domain.repository.CfopRegraRepository;
+import br.com.pc.omniflow.service.BaseService;
+import br.com.pc.omniflow.service.cadastro.CfopService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +18,10 @@ public class CfopRegraService extends BaseService {
     public CfopRegraService(CfopRegraRepository repository, CfopService cfopService) {
         this.repository = repository;
         this.cfopService = cfopService;
+    }
+
+    public CfopRegra buscarPendente(String cfop){
+        return repository.findByStatusAndCfopCodigo(StatusRegra.PENDENTE, cfop).orElse(null);
     }
 
     public CfopRegra buscarOuCriarRegra(Long gruId, String codigoCfop) {

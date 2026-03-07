@@ -1,15 +1,16 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.cadastro;
 
 import br.com.pc.omniflow.domain.enums.TipoDocumento;
 import br.com.pc.omniflow.domain.model.Entidade;
 import br.com.pc.omniflow.domain.repository.EntidadeRepository;
 import br.com.pc.omniflow.dto.nfe.EmitDestDTO;
+import br.com.pc.omniflow.service.BaseService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class EntidadeService extends BaseService{
+public class EntidadeService extends BaseService {
 
     private final EntidadeRepository repository;
 

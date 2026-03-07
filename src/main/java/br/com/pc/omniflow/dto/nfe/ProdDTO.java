@@ -1,8 +1,10 @@
 package br.com.pc.omniflow.dto.nfe;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ProdDTO {
 
@@ -30,7 +32,9 @@ public class ProdDTO {
     @JacksonXmlProperty(localName = "NCM")
     private String ncm;
 
-
+    @JacksonXmlProperty(localName = "rastro")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<RastroDTO> rastros;
 
     public ProdDTO() {
     }
@@ -97,5 +101,13 @@ public class ProdDTO {
 
     public void setNcm(String ncm) {
         this.ncm = ncm;
+    }
+
+    public List<RastroDTO> getRastros() {
+        return rastros;
+    }
+
+    public void setRastros(List<RastroDTO> rastros) {
+        this.rastros = rastros;
     }
 }

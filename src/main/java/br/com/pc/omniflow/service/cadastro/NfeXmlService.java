@@ -1,8 +1,9 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.cadastro;
 
 import br.com.pc.omniflow.domain.enums.StatusProcessamento;
 import br.com.pc.omniflow.domain.model.NfeXml;
 import br.com.pc.omniflow.domain.repository.NfeXmlRepository;
+import br.com.pc.omniflow.service.BaseService;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;

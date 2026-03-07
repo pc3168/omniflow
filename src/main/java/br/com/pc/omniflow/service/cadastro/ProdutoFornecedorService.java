@@ -1,9 +1,10 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.cadastro;
 
 import br.com.pc.omniflow.domain.model.Entidade;
 import br.com.pc.omniflow.domain.model.Produto;
 import br.com.pc.omniflow.domain.model.ProdutoFornecedor;
 import br.com.pc.omniflow.domain.repository.ProdutoFornecedorRepository;
+import br.com.pc.omniflow.service.BaseService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -59,6 +59,9 @@ public class NfeItem extends BaseEntity {
     @Column(name = "ITEM_LOTE", length = 50, nullable = false, columnDefinition = "Varchar(50) DEFAULT 'ND'")
     private String lote = "ND";
 
+    @Column(name = "ITEM_QUANTIDADE_LOTE")
+    private BigDecimal quantidadeLote;
+
     @Column(name = "ITEM_VALIDADE")
     private LocalDate validade;
 
@@ -225,6 +228,14 @@ public class NfeItem extends BaseEntity {
 
     public void setCfopRegra(CfopRegra cfopRegra) {
         this.cfopRegra = cfopRegra;
+    }
+
+    public BigDecimal getQuantidadeLote() {
+        return quantidadeLote;
+    }
+
+    public void setQuantidadeLote(BigDecimal quantidadeLote) {
+        this.quantidadeLote = quantidadeLote;
     }
 
     @Override

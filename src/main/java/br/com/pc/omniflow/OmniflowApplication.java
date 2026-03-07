@@ -1,9 +1,7 @@
 package br.com.pc.omniflow;
 
-import br.com.pc.omniflow.service.NfeParserService;
-import br.com.pc.omniflow.service.NfeXmlService;
-import br.com.pc.omniflow.service.TesteService;
-import br.com.pc.omniflow.service.ZTesteNfeArquivoService;
+import br.com.pc.omniflow.service.cadastro.NfeXmlService;
+import br.com.pc.omniflow.service.parser.NfeParserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,12 +13,6 @@ public class OmniflowApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(OmniflowApplication.class, args);
 	}
-
-	@Autowired
-	TesteService testeService;
-
-	@Autowired
-	ZTesteNfeArquivoService zTesteNfeArquivoService;
 
 	@Autowired
 	NfeXmlService nfeXmlService;
@@ -40,6 +32,6 @@ public class OmniflowApplication implements CommandLineRunner {
 		nfeXmlService.importar(1L, file);
 
 		nfeParserService.processarPendentes(1L);
-		
+
 	}
 }

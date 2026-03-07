@@ -1,10 +1,17 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.parser;
 
 import br.com.pc.omniflow.domain.enums.StatusProcessamento;
 import br.com.pc.omniflow.domain.enums.TipoEntidade;
 import br.com.pc.omniflow.domain.model.*;
 import br.com.pc.omniflow.domain.repository.NfeXmlRepository;
 import br.com.pc.omniflow.dto.nfe.*;
+import br.com.pc.omniflow.service.BaseService;
+import br.com.pc.omniflow.service.fiscal.CfopRegraService;
+import br.com.pc.omniflow.service.fiscal.NfeCabecalhoService;
+import br.com.pc.omniflow.service.cadastro.EntidadeService;
+import br.com.pc.omniflow.service.cadastro.ProdutoEanService;
+import br.com.pc.omniflow.service.cadastro.ProdutoFornecedorService;
+import br.com.pc.omniflow.service.cadastro.ProdutoService;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.stereotype.Service;
 
@@ -49,8 +56,8 @@ public class NfeParserService extends BaseService {
 
             for (NfeXml nfeXml : pendentes) {
                 try {
-                    processarConteudoXml(gruId, nfeXml);
-                    nfeXml.setStatusProcessamento(StatusProcessamento.VALIDADO);
+                    StatusProcessamento status = processarConteudoXml(gruId, nfeXml);
+                    nfeXml.setStatusProcessamento(status);
                 } catch (Exception e) {
                     nfeXml.setStatusProcessamento(StatusProcessamento.ERRO);
                     nfeXml.setLogErro(e.getMessage());
@@ -62,13 +69,12 @@ public class NfeParserService extends BaseService {
         });
     }
 
-    private void processarConteudoXml(Long gruId, NfeXml nfeXml) throws Exception {
+    private StatusProcessamento processarConteudoXml(Long gruId, NfeXml nfeXml) throws Exception {
         NfeProcDTO nfeDto = xmlMapper.readValue(nfeXml.getXmlOriginal(), NfeProcDTO.class);
         InfNfeDTO inf = nfeDto.getNfe().getInfNFe();
         IdeDTO ide = inf.getIde();
+        StatusProcessamento status = StatusProcessamento.VALIDADO;
 
-        // --- ETAPA 1: TRATAR ENTIDADES (Emitente e Destinatário) ---
-        // Aqui está faltando ter a UF para realizar o cadastro do Emitente ou Destinatario.
         Entidade emitente = entidadeService.buscarOuCriarPorDocumento(gruId,inf.getEmitente());
         Entidade destino = entidadeService.buscarOuCriarPorDocumento(gruId,inf.getDestinatario());
 
@@ -102,20 +108,101 @@ public class NfeParserService extends BaseService {
                 * fazer o vinculo e caso não encontrar ele pode gravar null na tabela do vinculo de produtoInterno onde
                 * terá que ajustar esse vinculo depois. Antes de realizar o calculo do estoque.
                 */
+                if(produtoInterno == null ){
+                    status = StatusProcessamento.PENDENTE_REGRA;
+                }
                 produtoFornecedorService.buscarOuCriarVinculo(gruId, emitente, produtoInterno, prodDto.getCodigo());
             }
 
-            NfeItem nfeItem = converterItem(gruId,det, produtoInterno);
-            cabecalho.adicionarItem(nfeItem);
+            if (prodDto.getRastros() != null && !prodDto.getRastros().isEmpty()) {
+                for (RastroDTO rastro : prodDto.getRastros()) {
+                    NfeItem itemLote = converterItem(gruId, det, produtoInterno);
+
+                    itemLote.setLote(rastro.getNumeroLote());
+                    itemLote.setQuantidade(rastro.getQuantidadeLote());
+
+                    if (rastro.getDataFabricacao() != null)
+                        itemLote.setFabricacao(LocalDate.parse(rastro.getDataFabricacao()));
+                    if (rastro.getDataValidade() != null)
+                        itemLote.setValidade(LocalDate.parse(rastro.getDataValidade()));
+
+                    cabecalho.adicionarItem(itemLote);
+                }
+            } else {
+                NfeItem itemUnico = converterItem(gruId, det, produtoInterno);
+                itemUnico.setLote("ND");
+                cabecalho.adicionarItem(itemUnico);
+            }
 
             if (inf.getTotal() != null && inf.getTotal().getIcmsTot() != null) {
                 NfeTotais totaisEntidade = converterTotais(gruId, inf.getTotal().getIcmsTot());
                 cabecalho.setTotais(totaisEntidade);
             }
 
+            if (cfopRegraService.buscarPendente(det.getProduto().getCfop()) != null){
+                status = StatusProcessamento.PENDENTE_REGRA;
+            }
+
             nfeCabecalhoService.salvar(gruId, cabecalho);
         }
+        return status;
     }
+
+
+//    private void processarConteudoXml(Long gruId, NfeXml nfeXml) throws Exception {
+//        NfeProcDTO nfeDto = xmlMapper.readValue(nfeXml.getXmlOriginal(), NfeProcDTO.class);
+//        InfNfeDTO inf = nfeDto.getNfe().getInfNFe();
+//        IdeDTO ide = inf.getIde();
+//
+//        // --- ETAPA 1: TRATAR ENTIDADES (Emitente e Destinatário) ---
+//        // Aqui está faltando ter a UF para realizar o cadastro do Emitente ou Destinatario.
+//        Entidade emitente = entidadeService.buscarOuCriarPorDocumento(gruId,inf.getEmitente());
+//        Entidade destino = entidadeService.buscarOuCriarPorDocumento(gruId,inf.getDestinatario());
+//
+//        NfeCabecalho cabecalho = new NfeCabecalho();
+//        cabecalho.setNfeXml(nfeXml);
+//        cabecalho.setEmitente(emitente);
+//        cabecalho.setDestinatario(destino);
+//        cabecalho.setDataEmissao(ide.getDataEmissao());
+//        cabecalho.setModelo(ide.getModeloEnum());
+//        cabecalho.setNatureza(ide.getNaturezaOperacao());
+//        cabecalho.setNumeroNota(Integer.parseInt(ide.getNumero()));
+//        cabecalho.setSerie(Integer.parseInt(ide.getSerie()));
+//        cabecalho.setTipoOperacao(ide.getTipoOperacaoEnum());
+//
+//        // --- ETAPA 2: TRATAR PRODUTOS E DE-PARA ---
+//        for (DetDTO det : inf.getItens()) {
+//            ProdDTO prodDto = det.getProduto();
+//
+//            Produto produtoInterno = null;
+//            if (TipoEntidade.FILIAL.equals(emitente.getTipo())){
+//                produtoInterno = produtoService.buscarOuCriar(gruId, prodDto.getCodigo(), prodDto.getDescricao());
+//                produtoEanService.buscarOuSalvarEan(gruId, produtoInterno, prodDto.getEan());
+//            }else{
+//                produtoInterno = produtoEanService.buscarPorEan(gruId, prodDto.getEan())
+//                        .map(ProdutoEan::getProduto)
+//                        .orElse(null);
+//
+//                /*
+//                 * Acho que aqui deveria ter uma tabela de produto_ean onde armazenaria ai quando o emitente
+//                 * for um Externo ele tem que realizar o cadastro do fornecedor e buscar pelo ean o Produto para
+//                 * fazer o vinculo e caso não encontrar ele pode gravar null na tabela do vinculo de produtoInterno onde
+//                 * terá que ajustar esse vinculo depois. Antes de realizar o calculo do estoque.
+//                 */
+//                produtoFornecedorService.buscarOuCriarVinculo(gruId, emitente, produtoInterno, prodDto.getCodigo());
+//            }
+//
+//            NfeItem nfeItem = converterItem(gruId,det, produtoInterno);
+//            cabecalho.adicionarItem(nfeItem);
+//
+//            if (inf.getTotal() != null && inf.getTotal().getIcmsTot() != null) {
+//                NfeTotais totaisEntidade = converterTotais(gruId, inf.getTotal().getIcmsTot());
+//                cabecalho.setTotais(totaisEntidade);
+//            }
+//
+//            nfeCabecalhoService.salvar(gruId, cabecalho);
+//        }
+//    }
 
     private NfeItem converterItem(Long gruId, DetDTO det, Produto produtoInterno) {
         NfeItem item = new NfeItem(gruId);
@@ -135,8 +222,6 @@ public class NfeParserService extends BaseService {
         item.setValorUnitario(p.getValorUnitario());
         item.setNcm(p.getNcm());
 //        item.setValorTotal(p.getValorProd());
-        item.setLote("");
-        item.setValidade(LocalDate.now());
         return item;
     }
 

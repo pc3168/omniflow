@@ -2,8 +2,8 @@ package br.com.pc.omniflow.domain.enums;
 
 public enum StatusProcessamento {
     RECEBIDO,
-    PENDENTE_REGRA,
     VALIDADO,
+    PENDENTE_REGRA,
     PROCESSADO,
     ERRO,
     CANCELADO

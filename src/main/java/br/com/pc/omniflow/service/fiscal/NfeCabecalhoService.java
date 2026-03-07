@@ -1,11 +1,12 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.fiscal;
 
 import br.com.pc.omniflow.domain.model.NfeCabecalho;
 import br.com.pc.omniflow.domain.repository.NfeCabecalhoRepository;
+import br.com.pc.omniflow.service.BaseService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NfeCabecalhoService extends BaseService{
+public class NfeCabecalhoService extends BaseService {
 
     private final NfeCabecalhoRepository cabecalhoRepository;
 

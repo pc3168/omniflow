@@ -1,8 +1,9 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.cadastro;
 
 import br.com.pc.omniflow.domain.enums.TipoProduto;
 import br.com.pc.omniflow.domain.model.Produto;
 import br.com.pc.omniflow.domain.repository.ProdutoRepository;
+import br.com.pc.omniflow.service.BaseService;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,4 +1,4 @@
-package br.com.pc.omniflow.service;
+package br.com.pc.omniflow.service.cadastro;
 
 import br.com.pc.omniflow.domain.model.Cfop;
 import br.com.pc.omniflow.domain.repository.CfopRepository;
