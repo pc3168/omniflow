@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@Transactional
 public abstract class BaseService {
 
     @Autowired
@@ -20,16 +19,19 @@ public abstract class BaseService {
     @Autowired
     protected LogService log;
 
+    @Transactional
     protected <T> T comFiltro(Long gruId, Supplier<T> query) {
         return grupoFilter.execute(gruId, query);
     }
 
     protected <T extends TenantEntity> T salvar(Long gruId, JpaRepository<T, ?> repository, T entidade) {
-        return comFiltro(gruId, () -> {
-            GrupoEmpresa grupo = new GrupoEmpresa(gruId);
-            entidade.setGrupo(grupo);
+//        return comFiltro(gruId, () -> {
+//            GrupoEmpresa grupo = new GrupoEmpresa(gruId);
+//            entidade.setGrupo(grupo);
+//            return repository.save(entidade);
+//        });
+            entidade.setGrupo(new GrupoEmpresa(gruId));
             return repository.save(entidade);
-        });
     }
 
     protected <T> void deletar(Long gruId, JpaRepository<T, Long> repository, Long id) {

@@ -33,7 +33,8 @@ public class NfeCabecalho extends BaseEntity{
     @JoinColumn(name = "ENT_DESTINATARIO", nullable = false)
     private Entidade destinatario;
 
-    @OneToOne(cascade = CascadeType.ALL)
+//    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne()
     @JoinColumn(name = "NFE_ID", nullable = false)
     private NfeXml nfeXml;
 
@@ -83,6 +84,10 @@ public class NfeCabecalho extends BaseEntity{
     }
 
     public NfeCabecalho() {}
+
+    public NfeCabecalho(Long gruId) {
+        this.grupo = new GrupoEmpresa(gruId);
+    }
 
     public void setDataEmissao(String dataEmissao) {
         this.dataEmissao = formatarDataSefaz(dataEmissao);

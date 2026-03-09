@@ -14,13 +14,15 @@ public class NfeCabecalhoService extends BaseService {
         this.cabecalhoRepository = cabecalhoRepository;
     }
 
+
     public NfeCabecalho salvar(Long gruId, NfeCabecalho cabecalho) {
 
         if (cabecalho == null) {
             lancarErro("Cabecalho não pode ser nulo");
+            return null;
         }
 
-        return salvar(gruId, cabecalhoRepository, cabecalho);
+        return this.salvar(gruId, cabecalhoRepository, cabecalho);
     }
 
     public void excluir(Long gruId, Long cabecalhoId){

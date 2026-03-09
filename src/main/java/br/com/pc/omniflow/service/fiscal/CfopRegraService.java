@@ -38,10 +38,10 @@ public class CfopRegraService extends BaseService {
                         // 3. Cria a regra específica do grupo
                         CfopRegra novaRegra = new CfopRegra();
                         novaRegra.setCfop(cfopMestre);
-//                        novaRegra.setDescricao("Configuração automática - Revisão necessária");
                         novaRegra.setStatus(StatusRegra.PENDENTE); // Trava o estoque
-//                        novaRegra.setSinalEstoque(TipoMovimentoEstoque.NENHUM);
                         novaRegra.setMovimentaEstoque(true);
+//                        novaRegra.setDescricao("Configuração automática - Revisão necessária");
+//                        novaRegra.setSinalEstoque(TipoMovimentoEstoque.NENHUM);
 
                         return this.salvar(gruId, repository, novaRegra);
                     });

@@ -54,6 +54,10 @@ public class NfeXml extends BaseEntity{
 
     public NfeXml() {}
 
+    public NfeXml(Long gruId) {
+        this.grupo = new GrupoEmpresa(gruId);
+    }
+
     public Long getId() {
         return id;
     }
@@ -138,4 +142,18 @@ public class NfeXml extends BaseEntity{
         return Objects.hashCode(id);
     }
 
+    @Override
+    public String toString() {
+        return "NfeXml{" +
+                "id=" + id +
+                ", grupo=" + grupo +
+                ", chaveAcesso='" + chaveAcesso + '\'' +
+                ", nomeArquivo='" + nomeArquivo + '\'' +
+                ", xmlOriginal='" + xmlOriginal + '\'' +
+                ", dataImportacao=" + dataImportacao +
+                ", statusProcessamento=" + statusProcessamento +
+                ", logErro='" + logErro + '\'' +
+                ", tipoXml=" + tipoXml +
+                '}';
+    }
 }

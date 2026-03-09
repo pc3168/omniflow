@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PRODUTO_EAN", uniqueConstraints = {
+@Table(name = "PRODUTOS_EAN", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"EAN_CODIGO", "GRU_ID"})
 })
 public class ProdutoEan extends BaseEntity {
@@ -26,6 +26,10 @@ public class ProdutoEan extends BaseEntity {
     private String ean;
 
     public ProdutoEan() {
+    }
+
+    public ProdutoEan(Long gruId) {
+        this.grupo = new GrupoEmpresa(gruId);
     }
 
     public Long getId() {

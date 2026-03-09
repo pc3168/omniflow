@@ -34,9 +34,20 @@ public class NfeXmlService extends BaseService {
 
 
     public void importar(Long gruId, File arquivo){
+        if (arquivo == null || !arquivo.exists()) {
+            log.info(this.getClass(), "O arquivo ou diretório informado não existe.");
+            return;
+        }
+
         if (arquivo.isDirectory()){
-            for (File arFile : arquivo.listFiles()){
-                importar(gruId, arFile, arFile.getName());
+            File[] listaArquivos = arquivo.listFiles();
+
+            if (listaArquivos != null) {
+                for (File arFile : listaArquivos) {
+                    importar(gruId, arFile, arFile.getName());
+                }
+            } else {
+                lancarErro("Não foi possível ler o conteúdo do diretório: " + arquivo.getAbsolutePath());
             }
         }else{
             importar(gruId, arquivo, arquivo.getName());
@@ -47,23 +58,20 @@ public class NfeXmlService extends BaseService {
      * Ponto de entrada principal. Decide se é ZIP ou XML e processa.
      */
     public void importar(Long gruId, File arquivo, String nomeOriginal) {
-        comFiltro(gruId, () -> {
-            try {
-                log.info(this.getClass(), "Recebido arquivo para importação: " + nomeOriginal);
+        try {
+            log.info(this.getClass(), "Recebido arquivo para importação: " + nomeOriginal);
 
-                if (nomeOriginal.toLowerCase().endsWith(".zip")) {
-                    processarZip(gruId, arquivo);
-                } else if (nomeOriginal.toLowerCase().endsWith(".xml")) {
-                    processarXmlUnico(gruId, arquivo, nomeOriginal);
-                } else {
-                    log.info(this.getClass(), "Formato de arquivo não suportado: " + nomeOriginal);
-                }
-
-            } catch (Exception e) {
-                lancarErro("Erro crítico ao importar arquivo " + nomeOriginal, e);
+            if (nomeOriginal.toLowerCase().endsWith(".zip")) {
+                processarZip(gruId, arquivo);
+            } else if (nomeOriginal.toLowerCase().endsWith(".xml")) {
+                processarXmlUnico(gruId, arquivo, nomeOriginal);
+            } else {
+                log.info(this.getClass(), "Formato de arquivo não suportado: " + nomeOriginal);
             }
-            return null;
-        });
+
+        } catch (Exception e) {
+            lancarErro("Erro crítico ao importar arquivo " + nomeOriginal, e);
+        }
     }
 
     private void processarZip(Long gruId, File arquivoZip) throws IOException {
@@ -139,14 +147,14 @@ public class NfeXmlService extends BaseService {
                 return;
             }
 
-            NfeXml nfeXml = new NfeXml();
+            NfeXml nfeXml = new NfeXml(gruId);
             nfeXml.setChaveAcesso(chaveAcesso);
             nfeXml.setXmlOriginal(conteudoXml);
             nfeXml.setNomeArquivo(nomeArquivo);
             nfeXml.setTipoXml(tipo);
             nfeXml.setStatusProcessamento(StatusProcessamento.RECEBIDO);
 
-            this.salvar(gruId, nfeXmlRepository, nfeXml);
+            nfeXmlRepository.save(nfeXml);
             log.info(this.getClass(), "XML salvo com sucesso: " + chaveAcesso);
 
         } catch (Exception e) {

@@ -34,7 +34,7 @@ public class EntidadeService extends BaseService {
         return comFiltro(gruId, () -> {
             return repository.findByDocumento(dto.getDocumento())
                     .orElseGet(() -> {
-                        log.info(this.getClass(), "Criando nova entidade: " + dto.getNomeFantasia() + " (" + dto.getDocumento() + ")");
+                        log.info(this.getClass(), "Criando nova entidade: " + dto.getNome() + " (" + dto.getDocumento() + ")");
 
                         TipoDocumento tipoDocumento = dto.getDocumento().length() >= 14 ? TipoDocumento.CNPJ : TipoDocumento.CPF;
 

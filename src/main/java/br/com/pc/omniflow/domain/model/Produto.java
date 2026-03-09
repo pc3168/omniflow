@@ -28,6 +28,9 @@ public class Produto extends BaseEntity{
     @OneToMany(mappedBy = "produtokit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdutoComposicao> itensDoKit = new ArrayList<>();
 
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProdutoEan> produtosEan = new ArrayList<>();
+
     @Column(name = "PRO_SKU", length = 50, nullable = false)
     private String sku;
 
@@ -49,6 +52,16 @@ public class Produto extends BaseEntity{
     public void addComponente(ProdutoComposicao componente) {
         itensDoKit.add(componente);
         componente.setProdutokit(this);
+    }
+
+    public void addEan(ProdutoEan novoEan) {
+        boolean jaExiste = this.produtosEan.stream()
+                .anyMatch(e -> e.getEan().equals(novoEan.getEan()));
+
+        if (!jaExiste) {
+            this.produtosEan.add(novoEan);
+            novoEan.setProduto(this);
+        }
     }
 
     public Long getId() {

@@ -49,25 +49,24 @@ public class NfeParserService extends BaseService {
      * Busca todos os XMLs pendentes e processa um a um.
      */
     public void processarPendentes(Long gruId) {
-        comFiltro(gruId, () -> {
-            // Busca registros com status 'RECEBIDO' para o grupo atual
-            List<NfeXml> pendentes = nfeXmlRepository.findByStatusProcessamento(StatusProcessamento.RECEBIDO);
+        List<NfeXml> pendentes = comFiltro(gruId, () ->
+                nfeXmlRepository.findByStatusProcessamento(StatusProcessamento.RECEBIDO));
 
-            log.info(this.getClass(), "Encontrados " + pendentes.size() + " XMLs para processar.");
+        log.info(this.getClass(), "Encontrados " + pendentes.size() + " XMLs para processar.");
 
-            for (NfeXml nfeXml : pendentes) {
-                try {
-                    StatusProcessamento status = processarConteudoXml(gruId, nfeXml);
-                    nfeXml.setStatusProcessamento(status);
-                } catch (Exception e) {
-                    nfeXml.setStatusProcessamento(StatusProcessamento.ERRO);
-                    nfeXml.setLogErro(e.getMessage());
-                    lancarErro("Falha ao processar ID: " + nfeXml.getId() + " e a chave: " + nfeXml.getChaveAcesso(), e);
-                }
-                nfeXmlRepository.save(nfeXml);
+        for (NfeXml nfeXml : pendentes) {
+            try {
+                StatusProcessamento status = processarConteudoXml(gruId, nfeXml);
+                nfeXml.setStatusProcessamento(status);
+            } catch (Exception e) {
+                nfeXml.setStatusProcessamento(StatusProcessamento.ERRO);
+                nfeXml.setLogErro(e.getMessage());
+                lancarErro("Falha ao processar ID: " + nfeXml.getId() + " e a chave: " + nfeXml.getChaveAcesso(), e);
             }
-            return null;
-        });
+
+            nfeXmlRepository.save(nfeXml);
+//            this.salvar(gruId, nfeXmlRepository, nfeXml);
+        }
     }
 
     private StatusProcessamento processarConteudoXml(Long gruId, NfeXml nfeXml) throws Exception {
@@ -86,7 +85,7 @@ public class NfeParserService extends BaseService {
         Entidade emitente = entidadeService.buscarOuCriarPorDocumento(gruId,inf.getEmitente());
         Entidade destino = entidadeService.buscarOuCriarPorDocumento(gruId,inf.getDestinatario());
 
-        NfeCabecalho cabecalho = new NfeCabecalho();
+        NfeCabecalho cabecalho = new NfeCabecalho(gruId);
         cabecalho.setNfeXml(nfeXml);
         cabecalho.setEmitente(emitente);
         cabecalho.setDestinatario(destino);
@@ -114,7 +113,10 @@ public class NfeParserService extends BaseService {
 
             if (isNotaPropria){
                 produtoInterno = produtoService.buscarOuCriar(gruId, prodDto.getCodigo(), prodDto.getDescricao());
-                produtoEanService.buscarOuSalvarEan(gruId, produtoInterno, prodDto.getEan());
+                if (prodDto.getEan() != null && !prodDto.getEan().isBlank()) {
+                    produtoEanService.buscarOuSalvarEan(gruId, produtoInterno, prodDto.getEan());
+                }
+//                produtoInterno.addEan(converterEan(gruId, prodDto, produtoInterno));
             }else{
                 produtoInterno = produtoEanService.buscarPorEan(gruId, prodDto.getEan())
                         .map(ProdutoEan::getProduto)
@@ -215,5 +217,14 @@ public class NfeParserService extends BaseService {
         t.setValorTotalTributos(dto.getValorTotalTributos());
         return t;
     }
+
+    private ProdutoEan converterEan(Long gruId, ProdDTO prodDto, Produto produto) {
+        ProdutoEan produtoEan = new ProdutoEan(gruId);
+        produtoEan.setEan(prodDto.getEan());
+        produtoEan.setProduto(produto);
+        return produtoEan;
+    }
+
+
 
 }

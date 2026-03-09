@@ -27,10 +27,10 @@ public class OmniflowApplication implements CommandLineRunner {
 //		testeService.teste(1L);
 //		testeService.teste2(1L);
 		java.io.File file = new java.io.File("xml");
-
-		System.out.println(file.getAbsolutePath());
-		nfeXmlService.importar(1L, file);
-
+//
+//		System.out.println(file.getAbsolutePath());
+////		nfeXmlService.importar(1L, file);
+//
 		nfeParserService.processarPendentes(1L);
 
 	}
