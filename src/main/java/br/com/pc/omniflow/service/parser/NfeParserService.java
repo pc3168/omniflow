@@ -58,14 +58,15 @@ public class NfeParserService extends BaseService {
             try {
                 StatusProcessamento status = processarConteudoXml(gruId, nfeXml);
                 nfeXml.setStatusProcessamento(status);
+                nfeXmlRepository.save(nfeXml);
             } catch (Exception e) {
+                e.printStackTrace();
                 nfeXml.setStatusProcessamento(StatusProcessamento.ERRO);
-                nfeXml.setLogErro(e.getMessage());
+                nfeXml.setLogErro(e.getMessage().length() > 200 ? e.getMessage().substring(0, 200): e.getMessage());
+                nfeXmlRepository.save(nfeXml);
                 lancarErro("Falha ao processar ID: " + nfeXml.getId() + " e a chave: " + nfeXml.getChaveAcesso(), e);
             }
 
-            nfeXmlRepository.save(nfeXml);
-//            this.salvar(gruId, nfeXmlRepository, nfeXml);
         }
     }
 

@@ -34,7 +34,7 @@ public class NfeCabecalho extends BaseEntity{
     private Entidade destinatario;
 
 //    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @OneToOne()
+    @OneToOne
     @JoinColumn(name = "NFE_ID", nullable = false)
     private NfeXml nfeXml;
 

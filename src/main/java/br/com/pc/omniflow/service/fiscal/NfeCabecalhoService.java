@@ -5,6 +5,8 @@ import br.com.pc.omniflow.domain.repository.NfeCabecalhoRepository;
 import br.com.pc.omniflow.service.BaseService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class NfeCabecalhoService extends BaseService {
 
@@ -15,11 +17,26 @@ public class NfeCabecalhoService extends BaseService {
     }
 
 
-    public NfeCabecalho salvar(Long gruId, NfeCabecalho cabecalho) {
+//    public NfeCabecalho salvar(Long gruId, NfeCabecalho cabecalho) {
+//
+//        if (cabecalho == null) {
+//            lancarErro("Cabecalho não pode ser nulo");
+//            return null;
+//        }
+//
+//        return this.salvar(gruId, cabecalhoRepository, cabecalho);
+//    }
 
-        if (cabecalho == null) {
-            lancarErro("Cabecalho não pode ser nulo");
-            return null;
+    public NfeCabecalho salvar(Long gruId, NfeCabecalho cabecalho) {
+        // Verifique se já existe um cabeçalho para este XML
+        Optional<NfeCabecalho> existente = cabecalhoRepository.findByNfeXmlId(cabecalho.getNfeXml().getId());
+
+        if (existente.isPresent()) {
+            // Opção A: Lançar erro amigável
+            lancarErro("Este XML já foi processado e possui um cabeçalho (ID: " + existente.get().getId() + ")");
+
+            // Opção B: Atualizar o existente (Merge) em vez de criar novo
+            cabecalho.setId(existente.get().getId());
         }
 
         return this.salvar(gruId, cabecalhoRepository, cabecalho);
