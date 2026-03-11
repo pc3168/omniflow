@@ -60,6 +60,7 @@ public abstract class BaseService {
      */
     protected void lancarErro(String mensagem, Throwable e) {
         log.erro(this.getClass(), mensagem, e);
+        e.printStackTrace();
         throw new OmniFlowException(mensagem, e);
     }
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CfopRegraRepository extends JpaRepository<CfopRegra, String> {
+public interface CfopRegraRepository extends JpaRepository<CfopRegra, Long> {
 
     Optional<CfopRegra> findByCfopCodigo(String codigo);
 

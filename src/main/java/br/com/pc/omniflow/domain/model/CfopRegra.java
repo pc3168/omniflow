@@ -44,6 +44,10 @@ public class CfopRegra extends BaseEntity{
 
     public CfopRegra() {}
 
+    public CfopRegra(Long gruId) {
+        this.grupo = new GrupoEmpresa(gruId);
+    }
+
     public String getCfopString(){
         return this.cfop.getCodigo();
     }

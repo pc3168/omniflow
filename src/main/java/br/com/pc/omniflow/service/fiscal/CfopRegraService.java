@@ -12,22 +12,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class CfopRegraService extends BaseService {
 
-    private final CfopRegraRepository repository;
+    private final CfopRegraRepository cfopRegraService;
     private final CfopService cfopService;
 
-    public CfopRegraService(CfopRegraRepository repository, CfopService cfopService) {
-        this.repository = repository;
+    public CfopRegraService(CfopRegraRepository cfopRegraService, CfopService cfopService) {
+        this.cfopRegraService = cfopRegraService;
         this.cfopService = cfopService;
     }
 
     public CfopRegra buscarPendente(Long gruId, String cfop){
-        return comFiltro(gruId, () -> repository.findByStatusAndCfopCodigo(StatusRegra.PENDENTE, cfop).orElse(null));
+        return comFiltro(gruId, () -> cfopRegraService.findByStatusAndCfopCodigo(StatusRegra.PENDENTE, cfop).orElse(null));
     }
 
     public CfopRegra buscarOuCriarRegra(Long gruId, String codigoCfop) {
         return comFiltro(gruId, () -> {
             // 1. Tenta achar a regra já configurada para o grupo
-            return repository.findByCfopCodigo(codigoCfop)
+            return cfopRegraService.findByCfopCodigo(codigoCfop)
                     .orElseGet(() -> {
                         log.info(this.getClass(), "Criando regra de estoque pendente para CFOP: " + codigoCfop);
 
@@ -36,22 +36,23 @@ public class CfopRegraService extends BaseService {
                                 .orElseGet(() -> cfopService.buscarOuSalvar(codigoCfop, "CFOP não catalogado"));
 
                         // 3. Cria a regra específica do grupo
-                        CfopRegra novaRegra = new CfopRegra();
+                        CfopRegra novaRegra = new CfopRegra(gruId);
                         novaRegra.setCfop(cfopMestre);
                         novaRegra.setStatus(StatusRegra.PENDENTE); // Trava o estoque
                         novaRegra.setMovimentaEstoque(true);
 //                        novaRegra.setDescricao("Configuração automática - Revisão necessária");
 //                        novaRegra.setSinalEstoque(TipoMovimentoEstoque.NENHUM);
 
-                        return this.salvar(gruId, repository, novaRegra);
+                        return cfopRegraService.save(novaRegra);
+//                        return this.salvar(gruId, cfopRegraService, novaRegra);
                     });
         });
     }
 
-    public void excluir(Long gruId, String id) {
+    public void excluir(Long gruId, Long id) {
         comFiltro(gruId, () -> {
-            if (repository.existsById(id)) {
-                repository.deleteById(id);
+            if (cfopRegraService.existsById(id)) {
+                cfopRegraService.deleteById(id);
                 log.info(this.getClass(), "Registro " + id + " deletado com sucesso.");
             } else {
                 log.info(this.getClass(), "Tentativa de deletar registro " + id + " inexistente ou fora do grupo.");
