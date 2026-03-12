@@ -31,7 +31,8 @@ public class OmniflowApplication implements CommandLineRunner {
 //		System.out.println(file.getAbsolutePath());
 ////		nfeXmlService.importar(1L, file);
 //
-		nfeParserService.processarPendentes(1L);
+		nfeParserService.processarPendentes(1L, 1000);
 
+		System.exit(0);
 	}
 }

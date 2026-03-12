@@ -14,6 +14,8 @@ import br.com.pc.omniflow.service.cadastro.ProdutoService;
 import br.com.pc.omniflow.service.fiscal.CfopRegraService;
 import br.com.pc.omniflow.service.fiscal.NfeCabecalhoService;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -48,9 +50,16 @@ public class NfeParserService extends BaseService {
     /**
      * Busca todos os XMLs pendentes e processa um a um.
      */
-    public void processarPendentes(Long gruId) {
+    public void processarPendentes(Long gruId, int limite) {
+//        List<StatusProcessamento> statusParaTentar = Arrays.asList(
+//                StatusProcessamento.PENDENTE_REGRA,
+//                StatusProcessamento.ERRO
+//        );
+
+
         List<NfeXml> pendentes = comFiltro(gruId, () ->
-                nfeXmlRepository.findByStatusProcessamento(StatusProcessamento.RECEBIDO));
+                nfeXmlRepository.findByStatusProcessamento(StatusProcessamento.RECEBIDO,
+                        PageRequest.of(0, limite, Sort.by("id").ascending())));
 
         log.info(this.getClass(), "Encontrados " + pendentes.size() + " XMLs para processar.");
 
@@ -64,9 +73,8 @@ public class NfeParserService extends BaseService {
                 nfeXml.setStatusProcessamento(StatusProcessamento.ERRO);
                 nfeXml.setLogErro(e.getMessage().length() > 200 ? e.getMessage().substring(0, 200): e.getMessage());
                 nfeXmlRepository.save(nfeXml);
-                lancarErro("Falha ao processar ID: " + nfeXml.getId() + " e a chave: " + nfeXml.getChaveAcesso(), e);
+                registrarErro("Falha ao processar ID: " + nfeXml.getId() + " e a chave: " + nfeXml.getChaveAcesso(), e);
             }
-
         }
     }
 

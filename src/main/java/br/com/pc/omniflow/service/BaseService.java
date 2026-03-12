@@ -64,6 +64,10 @@ public abstract class BaseService {
         throw new OmniFlowException(mensagem, e);
     }
 
+    protected void registrarErro(String mensagem, Throwable e) {
+        log.erro(this.getClass(), mensagem, e);
+    }
+
     protected void lancarErro(String mensagem) {
         log.erro(this.getClass(), mensagem, null);
         throw new OmniFlowException(mensagem);
